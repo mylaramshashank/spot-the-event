@@ -56,6 +56,7 @@ export function FromReelsSection({ events }: FromReelsSectionProps) {
                 type={evt.type}
                 date={evt.start_at}
                 venue={evt.venue_name}
+                posterUrl={evt.poster_url}
                 aspectRatio="video"
               />
 

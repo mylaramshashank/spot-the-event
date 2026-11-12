@@ -5,6 +5,7 @@ import Link from "next/link";
 import { EventItem } from "@/types";
 import { getEvents, trackClick } from "@/lib/storage";
 import { EventCardRow } from "@/components/events/EventCardRow";
+import { TypographicPoster } from "@/components/common/TypographicPoster";
 import { formatShortDate, getEventStatus, sanitizeExternalUrl } from "@/lib/utils";
 
 function CountdownDisplay({ targetDate }: { targetDate: string }) {
@@ -77,7 +78,18 @@ export default function HackathonsPage() {
 
       {/* Featured Next Hackathon Highlight Card */}
       {nextHackathon && (
-        <div className="mb-12 bg-paper border-2 border-navy-900 rounded-3xl p-6 sm:p-8 shadow-md">
+        <div className="mb-12 bg-paper border-2 border-navy-900 rounded-3xl overflow-hidden shadow-md">
+          {nextHackathon.poster_url && (
+            <TypographicPoster
+              title={nextHackathon.title}
+              type={nextHackathon.type}
+              date={nextHackathon.start_at}
+              venue={nextHackathon.venue_name}
+              posterUrl={nextHackathon.poster_url}
+              aspectRatio="banner"
+            />
+          )}
+          <div className="p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-rule">
             <div>
               <span className="text-[11px] font-semibold tracking-eyebrow uppercase text-rust block mb-1">
@@ -157,6 +169,7 @@ export default function HackathonsPage() {
                 Watch Reel &rarr;
               </a>
             )}
+          </div>
           </div>
         </div>
       )}

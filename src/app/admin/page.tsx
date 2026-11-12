@@ -229,6 +229,7 @@ export default function AdminPage() {
       deadline_at: deadlineDate.toISOString(),
       reel_url: safeReelUrl || undefined,
       reel_code: cleanReelCode || undefined,
+      poster_url: editingEventId ? events.find((x) => x.id === editingEventId)?.poster_url : undefined,
       description: form.description.trim(),
       featured_note: form.featured_note.trim(),
       verified: form.verified,

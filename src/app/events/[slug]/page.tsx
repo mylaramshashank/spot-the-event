@@ -157,6 +157,7 @@ export default function EventDetailPage() {
           type={event.type}
           date={event.start_at}
           venue={event.venue_name}
+          posterUrl={event.poster_url}
           aspectRatio="banner"
         />
 

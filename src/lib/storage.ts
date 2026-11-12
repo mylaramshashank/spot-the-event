@@ -6,7 +6,7 @@ import { sanitizeExternalUrl } from "./utils";
 
 const EVENTS_KEY = "venlix_spot_events_v1";
 const SEED_VERSION_KEY = "venlix_spot_seed_version";
-const SEED_VERSION = "2026-11-12-paytm-v1";
+const SEED_VERSION = "2026-11-12-paytm-v2";
 const SAVED_KEY = "venlix_spot_saved_v1";
 const SUGGESTIONS_KEY = "venlix_spot_suggestions_v1";
 const CLICKS_KEY = "venlix_spot_clicks_v1";
@@ -63,6 +63,7 @@ function sanitizeEventUrls(event: EventItem): EventItem {
     register_url: sanitizeExternalUrl(event.register_url),
     venue_map_url: event.venue_map_url ? sanitizeExternalUrl(event.venue_map_url) : undefined,
     reel_url: event.reel_url ? sanitizeExternalUrl(event.reel_url) : undefined,
+    poster_url: event.poster_url ? sanitizeExternalUrl(event.poster_url) : undefined,
   };
 }
 

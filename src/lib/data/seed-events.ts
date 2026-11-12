@@ -22,7 +22,7 @@ export const SEED_EVENTS: EventItem[] = [
     deadline_at: '2026-11-11T23:59:00+05:30',
     reel_url: 'https://www.instagram.com/reel/Dfj8ToQhw1r/',
     reel_code: '01',
-    poster_url: '',
+    poster_url: '/posters/paytm-build-for-india-ai-hackathon-hyderabad.jpg',
     description: `The Paytm Build for India AI Hackathon – Hyderabad Edition brings together developers, AI enthusiasts, researchers, and builders to solve real-world fintech challenges. Organized by Paytm in collaboration with devSemble at Caw Studio, Gachibowli.
 
 Tracks & Problem Statements:

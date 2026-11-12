@@ -1,11 +1,15 @@
-import React from "react";
-import { formatShortDate } from "@/lib/utils";
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import { formatShortDate, sanitizeExternalUrl } from "@/lib/utils";
 
 interface TypographicPosterProps {
   title: string;
   type: string;
   date: string;
   venue: string;
+  posterUrl?: string;
   className?: string;
   aspectRatio?: "square" | "video" | "banner";
   titleSize?: string;
@@ -16,10 +20,13 @@ export function TypographicPoster({
   type,
   date,
   venue,
+  posterUrl,
   className = "",
   aspectRatio = "banner",
   titleSize,
 }: TypographicPosterProps) {
+  const [imgError, setImgError] = useState(false);
+
   const aspectClass =
     aspectRatio === "square"
       ? "aspect-square"
@@ -28,6 +35,27 @@ export function TypographicPoster({
       : "aspect-[21/9] sm:aspect-[24/9]";
 
   const isCompact = aspectRatio === "video" || aspectRatio === "square";
+
+  const safePoster = posterUrl ? sanitizeExternalUrl(posterUrl) : "#";
+  const hasPoster = safePoster !== "#" && !imgError;
+
+  if (hasPoster) {
+    return (
+      <div
+        className={`relative w-full ${aspectClass} bg-white overflow-hidden border-b border-rule ${className}`}
+      >
+        <Image
+          src={safePoster}
+          alt={title}
+          fill
+          priority={aspectRatio === "banner"}
+          sizes={isCompact ? "(max-width: 640px) 280px, 320px" : "(max-width: 1024px) 100vw, 1024px"}
+          className={isCompact ? "object-contain object-center" : "object-cover object-center"}
+          onError={() => setImgError(true)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
