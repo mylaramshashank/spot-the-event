@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/admin",
     },
-    sitemap: "https://spot.venlix.tech/sitemap.xml",
+    sitemap: "https://spot-the-event.vercel.app/sitemap.xml",
   };
 }

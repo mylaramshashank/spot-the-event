@@ -302,10 +302,10 @@ export function generateWeeklyDigest(events: EventItem[]): string {
     text += `*${idx + 1}. ${e.title}*\n`;
     text += `Date: ${dateStr} | Venue: ${e.venue_name.split(",")[0]}\n`;
     text += `Entry: ${e.fee_text}${e.prize ? ` | Prize: ${e.prize}` : ""}\n`;
-    text += `Details & Link: https://spot.venlix.tech/events/${e.slug}\n\n`;
+    text += `Details & Link: https://spot-the-event.vercel.app/events/${e.slug}\n\n`;
   });
 
-  text += `Explore all events: https://spot.venlix.tech/events\n`;
+  text += `Explore all events: https://spot-the-event.vercel.app/events\n`;
   text += `Forward this message to your college dev groups!`;
 
   return text;

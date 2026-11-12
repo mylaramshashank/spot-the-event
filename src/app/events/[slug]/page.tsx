@@ -10,7 +10,7 @@ import { StatusBadge, TypeBadge } from "@/components/common/StatusBadge";
 import { TypographicPoster } from "@/components/common/TypographicPoster";
 import { StickyMobileActionBar } from "@/components/events/StickyMobileActionBar";
 import { EventCardRow } from "@/components/events/EventCardRow";
-import { getGoogleCalendarUrl, downloadIcsFile } from "@/lib/calendar";
+import { getGoogleCalendarUrl } from "@/lib/calendar";
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -58,8 +58,9 @@ export default function EventDetailPage() {
 
   const handleWhatsAppShare = () => {
     trackClick("share", event.id, "whatsapp_share_button");
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://spot-the-event.vercel.app";
     const shareText = encodeURIComponent(
-      `Check out ${event.title} in Hyderabad!\nDate: ${formatDate(event.start_at)}\nVenue: ${event.venue_name}\nRegister: https://spot.venlix.tech/events/${event.slug}`
+      `Check out ${event.title} in Hyderabad!\nDate: ${formatDate(event.start_at)}\nVenue: ${event.venue_name}\n${isEnded ? "Details" : "Register"}: ${origin}/events/${event.slug}`
     );
     window.open(`https://api.whatsapp.com/send?text=${shareText}`, "_blank", "noopener,noreferrer");
   };
@@ -115,7 +116,7 @@ export default function EventDetailPage() {
     organizer: {
       "@type": "Organization",
       name: event.organizer,
-      url: "https://spot.venlix.tech",
+      url: "https://spot-the-event.vercel.app",
     },
   };
 
@@ -340,13 +341,6 @@ export default function EventDetailPage() {
           Share & Reminder
         </span>
         <div className="flex flex-wrap gap-2.5">
-          <button
-            type="button"
-            onClick={() => downloadIcsFile(event)}
-            className="h-10 px-3.5 bg-paper border border-rule hover:border-navy-900/40 rounded-sm text-xs font-sans font-semibold text-navy-900 transition-colors inline-flex items-center gap-1.5"
-          >
-            Download .ICS
-          </button>
           <a
             href={getGoogleCalendarUrl(event)}
             target="_blank"

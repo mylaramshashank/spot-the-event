@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { SEED_EVENTS } from "@/lib/data/seed-events";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://spot.venlix.tech";
+  const baseUrl = "https://spot-the-event.vercel.app";
 
   const staticPages = [
     "",

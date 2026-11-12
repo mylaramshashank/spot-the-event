@@ -47,7 +47,7 @@ export function buildIcsContent(event: EventItem): string {
   const end = formatIcsDate(event.end_at);
   const now = formatIcsDate(new Date().toISOString());
   const safeRegister = sanitizeExternalUrl(event.register_url);
-  const safeEventPage = `https://spot.venlix.tech/events/${encodeURIComponent(event.slug)}`;
+  const safeEventPage = `https://spot-the-event.vercel.app/events/${encodeURIComponent(event.slug)}`;
 
   const summary = escapeIcsText(event.title);
   const description = escapeIcsText(
@@ -56,7 +56,7 @@ export function buildIcsContent(event: EventItem): string {
       : event.description
   );
   const location = escapeIcsText(`${event.venue_name}, ${event.city}`);
-  const uid = `${sanitizeUidPart(event.id)}@spot.venlix.tech`;
+  const uid = `${sanitizeUidPart(event.id)}@spot-the-event.vercel.app`;
 
   return [
     "BEGIN:VCALENDAR",

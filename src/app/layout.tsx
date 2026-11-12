@@ -16,12 +16,12 @@ export const metadata: Metadata = {
   title: "Spot the Event by Venlix · Hyderabad Tech Events",
   description:
     "Curated tech events, hackathons, meetups and workshops in Hyderabad featured on @buildwithshashankk. Watch the reel, open the site, register in under 30 seconds.",
-  metadataBase: new URL("https://spot.venlix.tech"),
+  metadataBase: new URL("https://spot-the-event.vercel.app"),
   openGraph: {
     title: "Spot the Event by Venlix · Hyderabad Tech Events",
     description:
       "Every Hyderabad tech event, hackathon and workshop from the reels in one place.",
-    url: "https://spot.venlix.tech",
+    url: "https://spot-the-event.vercel.app",
     siteName: "Spot the Event",
     locale: "en_IN",
     type: "website",
