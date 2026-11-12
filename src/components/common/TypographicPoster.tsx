@@ -66,11 +66,8 @@ export function TypographicPoster({
         </h3>
       </div>
 
-      <div className="flex items-center justify-between border-t border-offwhite/15 pt-2 z-10 text-[11px] font-sans text-offwhite/70">
-        <span className="truncate max-w-[70%]">{venue}</span>
-        <span className="uppercase text-[9px] tracking-eyebrow text-emerald font-semibold">
-          Spot the Event
-        </span>
+      <div className="flex items-center border-t border-offwhite/15 pt-2 z-10 text-[11px] font-sans text-offwhite/70">
+        <span className="truncate w-full">{venue}</span>
       </div>
     </div>
   );
