@@ -26,15 +26,19 @@ export function TypographicPoster({
   titleSize,
 }: TypographicPosterProps) {
   const [imgError, setImgError] = useState(false);
+  const [containBanner, setContainBanner] = useState(false);
 
+  const isCompact = aspectRatio === "video" || aspectRatio === "square";
   const aspectClass =
     aspectRatio === "square"
       ? "aspect-square"
       : aspectRatio === "video"
       ? "aspect-[16/9]"
+      : containBanner
+      ? "aspect-[4/3] sm:aspect-[16/9] max-h-[420px]"
       : "aspect-[21/9] sm:aspect-[24/9]";
 
-  const isCompact = aspectRatio === "video" || aspectRatio === "square";
+  const useContain = isCompact || containBanner;
 
   const safePoster = posterUrl ? sanitizeExternalUrl(posterUrl) : "#";
   const hasPoster = safePoster !== "#" && !imgError;
@@ -50,7 +54,15 @@ export function TypographicPoster({
           fill
           priority={aspectRatio === "banner"}
           sizes={isCompact ? "(max-width: 640px) 280px, 320px" : "(max-width: 1024px) 100vw, 1024px"}
-          className={isCompact ? "object-contain object-center" : "object-cover object-center"}
+          className={useContain ? "object-contain object-center" : "object-cover object-center"}
+          onLoad={(e) => {
+            if (aspectRatio === "banner") {
+              const { naturalWidth, naturalHeight } = e.currentTarget;
+              if (naturalHeight > 0 && naturalWidth / naturalHeight < 1.8) {
+                setContainBanner(true);
+              }
+            }
+          }}
           onError={() => setImgError(true)}
         />
       </div>
