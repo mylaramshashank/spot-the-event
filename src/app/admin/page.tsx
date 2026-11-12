@@ -261,15 +261,12 @@ export default function AdminPage() {
     updateSuggestionStatus(sug.id, "approved");
     // Pre-populate form
     setEditingEventId(null);
-    const isFree = sug.is_free !== false;
     setForm((prev) => ({
       ...prev,
       title: sug.name,
       slug: sug.name.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-"),
       register_url: sug.url,
       organizer: sug.organizer || sug.college || "Organized via community",
-      is_free: isFree,
-      fee_text: !isFree ? (sug.price || "Paid") : "Free entry",
       status: "draft",
     }));
     loadData();
@@ -774,15 +771,6 @@ export default function AdminPage() {
                       }`}
                     >
                       {sug.status}
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-sans font-semibold uppercase ${
-                        sug.is_free === false
-                          ? "bg-rust/10 text-rust"
-                          : "bg-emerald-100 text-emerald"
-                      }`}
-                    >
-                      {sug.is_free === false ? `Paid: ${sug.price || "Fee required"}` : "Free"}
                     </span>
                     <span className="text-xs font-sans text-slate">
                       {new Date(sug.created_at).toLocaleDateString("en-IN")}

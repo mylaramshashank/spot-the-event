@@ -9,77 +9,36 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        chalk: "#EEF1F4",
-        paper: "#FFFFFF",
-        ink: {
-          DEFAULT: "#12151C",
-          soft: "#1C2230",
-          mute: "#2A3142",
-        },
-        mist: {
-          DEFAULT: "#5B6578",
-          soft: "#7A8496",
-        },
-        line: "#D5DBE5",
-        signal: {
-          DEFAULT: "#1FA97A",
-          dark: "#178A63",
-          soft: "#E6F7F0",
-          mist: "#D0EFE3",
-        },
-        alert: "#C23B2E",
-        // legacy aliases used across existing components
-        offwhite: "#EEF1F4",
-        surface: "#E6EAF0",
-        rule: "#D5DBE5",
+        offwhite: "#F8FAFC", // Crisp modern off-white (no beige/yellow tint)
+        paper: "#FFFFFF",    // Pure clean card surface
+        surface: "#F1F5F9",  // Subtle light slate surface
+        rule: "#E2E8F0",     // Clean, modern hairline border
         navy: {
-          950: "#0A0C11",
-          900: "#12151C",
-          800: "#1C2230",
-          700: "#2A3142",
-          600: "#3A455A",
+          950: "#060B18",
+          900: "#0B1530",    // Rich deep navy primary text & accents
+          800: "#111E44",
+          700: "#16264F",    // Deep navy secondary
+          600: "#1E3A8A",
         },
         slate: {
-          500: "#7A8496",
-          600: "#5B6578",
-          DEFAULT: "#5B6578",
+          500: "#64748B",
+          600: "#475569",
+          DEFAULT: "#475569", // Crisp muted text
         },
         emerald: {
-          DEFAULT: "#1FA97A",
-          600: "#178A63",
-          100: "#E6F7F0",
-          50: "#F2FBF7",
+          DEFAULT: "#10B981", // Vibrant, crisp tech emerald (no murky olive/forest)
+          600: "#059669",
+          100: "#D1FAE5",
+          50: "#ECFDF5",
         },
-        rust: "#C23B2E",
+        rust: "#DC2626",      // Urgent closing soon indicator
       },
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        sans: ["var(--font-body)", "ui-sans-serif", "sans-serif"],
+        display: ["var(--font-heading)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        sans: ["var(--font-body)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
       },
       letterSpacing: {
-        eyebrow: "0.12em",
-      },
-      boxShadow: {
-        lift: "0 12px 40px -18px rgba(18, 21, 28, 0.28)",
-      },
-      keyframes: {
-        "rise-in": {
-          "0%": { opacity: "0", transform: "translateY(18px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        "pan-slow": {
-          "0%": { transform: "scale(1.08) translate3d(0,0,0)" },
-          "100%": { transform: "scale(1.12) translate3d(-1.5%, 1%, 0)" },
-        },
-      },
-      animation: {
-        "rise-in": "rise-in 0.7s ease-out both",
-        "fade-in": "fade-in 0.6s ease-out both",
-        "pan-slow": "pan-slow 18s ease-in-out alternate infinite",
+        eyebrow: "0.14em",
       },
     },
   },

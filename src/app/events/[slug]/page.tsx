@@ -1,29 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { EventItem } from "@/types";
-import {
-  getEvents,
-  isEventSaved,
-  toggleSaveEventId,
-  trackClick,
-} from "@/lib/storage";
-import {
-  formatDate,
-  formatTime,
-  getEventStatus,
-  getDeadlineLabel,
-  sanitizeExternalUrl,
-} from "@/lib/utils";
+import { getEventBySlug, getEvents, isEventSaved, toggleSaveEventId, trackClick } from "@/lib/storage";
+import { formatDate, formatTime, getEventStatus, getDeadlineLabel, sanitizeExternalUrl } from "@/lib/utils";
 import { StatusBadge, TypeBadge } from "@/components/common/StatusBadge";
 import { TypographicPoster } from "@/components/common/TypographicPoster";
 import { StickyMobileActionBar } from "@/components/events/StickyMobileActionBar";
 import { EventCardRow } from "@/components/events/EventCardRow";
 import { getGoogleCalendarUrl, downloadIcsFile } from "@/lib/calendar";
-import { SITE, eventShareUrl } from "@/lib/site";
-import { VenlixPixelLoader } from "@/components/common/VenlixLogo";
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -33,20 +20,21 @@ export default function EventDetailPage() {
   const [allEvents, setAllEvents] = useState<EventItem[]>([]);
   const [saved, setSaved] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
-  const [regCopied, setRegCopied] = useState(false);
 
   useEffect(() => {
     const list = getEvents();
     setAllEvents(list);
     const found = list.find((e) => e.slug === slug);
     setEvent(found || null);
-    if (found) setSaved(isEventSaved(found.id));
+    if (found) {
+      setSaved(isEventSaved(found.id));
+    }
   }, [slug]);
 
   if (event === undefined) {
     return (
-      <div className="flex justify-center py-24">
-        <VenlixPixelLoader />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <p className="text-sm font-sans text-slate">Loading event details...</p>
       </div>
     );
   }
@@ -59,35 +47,37 @@ export default function EventDetailPage() {
   const isEnded = status === "ended";
   const deadlineLabel = getDeadlineLabel(event);
 
-  const handleSave = () => setSaved(toggleSaveEventId(event.id));
-  const handleRegister = () => trackClick("register", event.id, "detail_page_primary");
+  const handleSave = () => {
+    const isNowSaved = toggleSaveEventId(event.id);
+    setSaved(isNowSaved);
+  };
+
+  const handleRegister = () => {
+    trackClick("register", event.id, "detail_page_primary");
+  };
 
   const handleWhatsAppShare = () => {
     trackClick("share", event.id, "whatsapp_share_button");
     const shareText = encodeURIComponent(
-      `${event.title} · Hyderabad\n${formatDate(event.start_at)}\n${event.venue_name}\n${eventShareUrl(event.slug)}`
+      `Check out ${event.title} in Hyderabad!\nDate: ${formatDate(event.start_at)}\nVenue: ${event.venue_name}\nRegister: https://spot.venlix.tech/events/${event.slug}`
     );
     window.open(`https://api.whatsapp.com/send?text=${shareText}`, "_blank");
   };
 
-  const handleCopyLink = async () => {
-    trackClick("share", event.id, "copy_event_link");
-    await navigator.clipboard.writeText(eventShareUrl(event.slug));
-    setShareCopied(true);
-    setTimeout(() => setShareCopied(false), 2000);
+  const handleCopyLink = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    }
   };
 
-  const handleCopyRegister = async () => {
-    trackClick("share", event.id, "copy_register_link");
-    await navigator.clipboard.writeText(event.register_url);
-    setRegCopied(true);
-    setTimeout(() => setRegCopied(false), 2000);
-  };
-
+  // Related events
   const relatedEvents = allEvents
-    .filter((e) => e.id !== event.id && e.status === "published" && (e.type === event.type || e.city === event.city))
+    .filter((e) => e.id !== event.id && (e.type === event.type || e.city === event.city))
     .slice(0, 2);
 
+  // JSON-LD structured data for Google Event SEO
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -113,42 +103,54 @@ export default function EventDetailPage() {
     description: event.description,
     offers: {
       "@type": "Offer",
-      price: event.is_free ? "0" : event.fee_text.match(/\d[\d,]*/)?.[0]?.replace(/,/g, "") || "0",
+      price: event.is_free ? "0" : (event.fee_text.match(/\d[\d,]*/)?.[0]?.replace(/,/g, "") || "0"),
       priceCurrency: "INR",
       url: sanitizeExternalUrl(event.register_url),
-      availability: isEnded ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+      availability: isEnded
+        ? "https://schema.org/SoldOut"
+        : "https://schema.org/InStock",
       validThrough: event.deadline_at,
     },
     organizer: {
       "@type": "Organization",
       name: event.organizer,
-      url: SITE.url,
+      url: "https://spot.venlix.tech",
     },
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 pb-24 sm:px-6 sm:py-12 sm:pb-16 lg:px-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-24 sm:pb-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
+      {/* Back button */}
       <div className="mb-6">
-        <Link href="/events" className="text-xs font-semibold text-mist transition hover:text-ink">
-          ← Back to all events
+        <Link
+          href="/events"
+          className="text-xs font-sans font-semibold text-slate hover:text-navy-900 inline-flex items-center gap-1.5 transition-colors"
+        >
+          &larr; Back to all events
         </Link>
       </div>
 
+      {/* Ended Banner if past */}
       {isEnded && (
-        <div className="mb-6 rounded-xl border border-line bg-paper p-4 text-sm text-mist">
-          <strong className="mb-0.5 block font-bold text-ink">
-            This event has ended or registrations are closed.
-          </strong>
-          You can still review details below or explore related upcoming events.
+        <div className="mb-6 p-4 bg-paper border border-rule rounded-2xl shadow-xs flex items-start gap-3">
+          <span className="w-2 h-2 rounded-full bg-slate mt-1.5 shrink-0" />
+          <div className="text-xs sm:text-sm text-slate">
+            <strong className="text-navy-900 font-bold block mb-0.5">
+              This event has ended or registrations are closed.
+            </strong>
+            You can still review the details below or explore the next upcoming events.
+          </div>
         </div>
       )}
 
-      <div className="mb-8 overflow-hidden rounded-2xl border border-line bg-paper">
+      {/* Event Header Card */}
+      <div className="bg-paper border border-rule rounded-3xl overflow-hidden mb-8 shadow-sm">
+        {/* Poster or Typographic Poster */}
         <TypographicPoster
           title={event.title}
           type={event.type}
@@ -156,152 +158,179 @@ export default function EventDetailPage() {
           venue={event.venue_name}
           aspectRatio="banner"
         />
+
         <div className="p-5 sm:p-7">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <TypeBadge type={event.type} />
             <StatusBadge status={status} label={deadlineLabel} />
             {event.verified && (
-              <span className="rounded-md bg-signal-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-eyebrow text-signal-dark">
-                Verified
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-eyebrow uppercase text-emerald-600 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                Verified Organizer
               </span>
             )}
           </div>
-          <h1 className="font-display text-2xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-4xl lg:text-5xl">
+
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-navy-900 leading-[1.15] tracking-tight">
             {event.title}
           </h1>
-          <p className="mt-2 text-sm text-mist">
-            Organized by <strong className="font-bold text-ink">{event.organizer}</strong>
+
+          <p className="mt-2 text-sm text-slate">
+            Organized by <strong className="text-navy-900 font-bold">{event.organizer}</strong>
           </p>
 
-          <div className="mt-6 hidden items-center gap-3 border-t border-line pt-6 sm:flex">
+          {/* Desktop Primary Actions */}
+          <div className="mt-6 hidden sm:flex items-center gap-3 pt-6 border-t border-rule">
             <a
               href={isEnded ? "#" : sanitizeExternalUrl(event.register_url)}
               target={isEnded ? "_self" : "_blank"}
               rel="noopener noreferrer"
               onClick={isEnded ? (e) => e.preventDefault() : handleRegister}
-              className={`inline-flex h-11 items-center rounded-md px-6 text-sm font-semibold transition ${
+              className={`h-11 px-6 rounded-full font-semibold text-sm flex items-center justify-center transition-all shadow-xs ${
                 isEnded
-                  ? "cursor-not-allowed bg-surface text-mist"
-                  : "bg-signal text-white hover:bg-signal-dark"
+                  ? "bg-rule text-slate cursor-not-allowed"
+                  : "bg-emerald text-white hover:bg-emerald-600 active:scale-[0.98]"
               }`}
             >
-              {isEnded ? "Registrations closed" : "Register on official site →"}
+              {isEnded ? "Registrations Closed" : "Register on Official Site \u2192"}
             </a>
+
             <button
               type="button"
               onClick={handleSave}
-              className={`inline-flex h-11 items-center gap-2 rounded-md border px-5 text-xs font-semibold ${
-                saved ? "border-ink bg-ink text-white" : "border-line bg-paper text-ink"
+              className={`h-11 px-5 rounded-full border font-semibold text-xs flex items-center gap-2 transition-colors shadow-xs ${
+                saved
+                  ? "bg-navy-900 text-offwhite border-navy-900"
+                  : "bg-paper border-rule text-navy-900 hover:border-navy-900/40"
               }`}
             >
-              {saved ? "Saved" : "Save event"}
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill={saved ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+              <span>{saved ? "Saved to phone" : "Save event"}</span>
             </button>
-            <button
-              type="button"
-              onClick={handleCopyRegister}
-              className="inline-flex h-11 items-center rounded-md border border-line bg-paper px-5 text-xs font-semibold text-ink"
-            >
-              {regCopied ? "Registration link copied" : "Copy registration link"}
-            </button>
+
             {event.reel_url && (
               <a
                 href={sanitizeExternalUrl(event.reel_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackClick("instagram", event.id, "detail_watch_reel")}
-                className="inline-flex h-11 items-center rounded-md border border-line px-5 text-xs font-semibold text-ink"
+                className="h-11 px-5 rounded-full border border-rule bg-paper text-navy-900 font-semibold text-xs flex items-center gap-2 hover:border-navy-900/40 transition-colors shadow-xs"
               >
-                Watch reel →
+                Watch reel &rarr;
               </a>
             )}
           </div>
         </div>
       </div>
 
+      {/* "Why I featured this" - Shashank's Editorial Note */}
       {event.featured_note && (
-        <div className="mb-8 rounded-xl border border-line border-l-4 border-l-signal bg-paper p-5 sm:p-6">
-          <span className="mb-1 block text-[11px] font-semibold uppercase tracking-eyebrow text-signal-dark">
-            Why it&apos;s featured · {SITE.curator.name}
+        <div className="mb-8 p-5 sm:p-6 bg-paper border-l-4 border-l-emerald border-y border-r border-rule rounded-2xl shadow-xs">
+          <span className="text-[11px] font-semibold tracking-eyebrow uppercase text-emerald-600 block mb-1">
+            WHY I FEATURED THIS · SHASHANK’S NOTE
           </span>
-          <p className="text-sm italic leading-relaxed text-ink sm:text-base">
-            “{event.featured_note}”
+          <p className="text-sm sm:text-base text-navy-900 leading-relaxed italic">
+            &ldquo;{event.featured_note}&rdquo;
           </p>
         </div>
       )}
 
-      <div className="mb-8 rounded-xl border border-line bg-paper p-5 sm:p-7">
-        <h2 className="mb-4 border-b border-line pb-2 font-display text-2xl font-bold text-ink">
-          Key facts
+      {/* Key Facts in a 2-Column Definition List */}
+      <div className="mb-8 bg-paper border border-rule rounded-sm p-5 sm:p-7">
+        <h2 className="font-display text-2xl font-semibold text-navy-900 mb-4 pb-2 border-b border-rule">
+          Key Facts
         </h2>
-        <dl className="grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
+
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm font-sans">
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">When</dt>
-            <dd className="mt-1 font-medium text-ink">
+            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">When</dt>
+            <dd className="mt-1 font-medium text-navy-900">
               {formatDate(event.start_at)} ({formatTime(event.start_at)})
             </dd>
           </div>
+
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">Where</dt>
-            <dd className="mt-1 font-medium text-ink">
+            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Where</dt>
+            <dd className="mt-1 font-medium text-navy-900">
               {event.venue_name}
               {event.venue_map_url && (
                 <a
                   href={sanitizeExternalUrl(event.venue_map_url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-0.5 block text-xs text-signal hover:underline"
+                  className="block text-xs text-emerald hover:underline mt-0.5"
                 >
-                  View on Google Maps →
+                  View on Google Maps &rarr;
                 </a>
               )}
             </dd>
           </div>
+
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">Fee</dt>
-            <dd className="mt-1 font-medium text-ink">{event.fee_text}</dd>
+            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Fee</dt>
+            <dd className="mt-1 font-medium text-navy-900">{event.fee_text}</dd>
           </div>
+
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">Eligibility</dt>
-            <dd className="mt-1 font-medium text-ink">{event.eligibility}</dd>
+            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Eligibility</dt>
+            <dd className="mt-1 font-medium text-navy-900">{event.eligibility}</dd>
           </div>
+
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">Team size</dt>
-            <dd className="mt-1 font-medium text-ink">{event.team_size}</dd>
+            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Team Size</dt>
+            <dd className="mt-1 font-medium text-navy-900">{event.team_size}</dd>
           </div>
+
           {event.prize && (
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">Prize pool</dt>
-              <dd className="mt-1 font-medium text-signal">{event.prize}</dd>
+              <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Prize Pool</dt>
+              <dd className="mt-1 font-medium text-emerald">{event.prize}</dd>
             </div>
           )}
+
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">Organizer</dt>
-            <dd className="mt-1 font-medium text-ink">{event.organizer}</dd>
+            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Organizer</dt>
+            <dd className="mt-1 font-medium text-navy-900">{event.organizer}</dd>
           </div>
+
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-eyebrow text-mist">Deadline</dt>
-            <dd className="mt-1 font-medium text-alert">
+            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Registration Deadline</dt>
+            <dd className="mt-1 font-medium text-rust">
               {formatDate(event.deadline_at)} ({deadlineLabel})
             </dd>
           </div>
         </dl>
       </div>
 
-      <div className="mb-8 rounded-xl border border-line bg-paper p-5 sm:p-7">
-        <h2 className="mb-3 border-b border-line pb-2 font-display text-2xl font-bold text-ink">
+      {/* Description */}
+      <div className="mb-8 bg-paper border border-rule rounded-sm p-5 sm:p-7">
+        <h2 className="font-display text-2xl font-semibold text-navy-900 mb-3 pb-2 border-b border-rule">
           About this event
         </h2>
-        <div className="whitespace-pre-line text-sm leading-relaxed text-ink/90 sm:text-base">
+        <div className="text-sm sm:text-base font-sans text-navy-900/90 leading-relaxed whitespace-pre-line">
           {event.description}
         </div>
       </div>
 
-      <div className="mb-12 rounded-xl border border-line bg-paper p-5">
-        <span className="mb-3 block text-[11px] font-semibold uppercase tracking-eyebrow text-mist">
-          Share & reminder
+      {/* Utility Actions: Calendar, Share, WhatsApp */}
+      <div className="mb-12 p-5 bg-paper border border-rule rounded-sm">
+        <span className="text-[11px] font-sans font-semibold tracking-eyebrow uppercase text-slate block mb-3">
+          Share & Reminder
         </span>
         <div className="flex flex-wrap gap-2.5">
-          <button type="button" onClick={() => downloadIcsFile(event)} className="h-10 rounded-md border border-line px-3.5 text-xs font-semibold text-ink">
+          <button
+            type="button"
+            onClick={() => downloadIcsFile(event)}
+            className="h-10 px-3.5 bg-paper border border-rule hover:border-navy-900/40 rounded-sm text-xs font-sans font-semibold text-navy-900 transition-colors inline-flex items-center gap-1.5"
+          >
             Download .ICS
           </button>
           <a
@@ -309,26 +338,34 @@ export default function EventDetailPage() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackClick("calendar", event.id, "google_cal_link")}
-            className="inline-flex h-10 items-center rounded-md border border-line px-3.5 text-xs font-semibold text-ink"
+            className="h-10 px-3.5 bg-paper border border-rule hover:border-navy-900/40 rounded-sm text-xs font-sans font-semibold text-navy-900 transition-colors inline-flex items-center gap-1.5"
           >
             Google Calendar
           </a>
-          <button type="button" onClick={handleWhatsAppShare} className="h-10 rounded-md border border-line px-3.5 text-xs font-semibold text-ink">
+          <button
+            type="button"
+            onClick={handleWhatsAppShare}
+            className="h-10 px-3.5 bg-paper border border-rule hover:border-navy-900/40 rounded-sm text-xs font-sans font-semibold text-navy-900 transition-colors inline-flex items-center gap-1.5"
+          >
             Share on WhatsApp
           </button>
-          <button type="button" onClick={handleCopyLink} className="h-10 rounded-md border border-line px-3.5 text-xs font-semibold text-ink">
-            {shareCopied ? "Page link copied" : "Copy page link"}
-          </button>
-          <button type="button" onClick={handleCopyRegister} className="h-10 rounded-md border border-line px-3.5 text-xs font-semibold text-ink sm:hidden">
-            {regCopied ? "Reg link copied" : "Copy registration link"}
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="h-10 px-3.5 bg-paper border border-rule hover:border-navy-900/40 rounded-sm text-xs font-sans font-semibold text-navy-900 transition-colors inline-flex items-center gap-1.5"
+          >
+            {shareCopied ? "Link Copied!" : "Copy Link"}
           </button>
         </div>
       </div>
 
+      {/* More Like This */}
       {relatedEvents.length > 0 && (
-        <div className="border-t border-line pt-8">
-          <p className="mb-1 text-[11px] font-semibold uppercase tracking-eyebrow text-mist">More like this</p>
-          <h2 className="mb-4 font-display text-2xl font-bold text-ink sm:text-3xl">
+        <div className="border-t border-rule pt-8">
+          <span className="text-[12px] font-sans font-semibold tracking-eyebrow uppercase text-slate block mb-1">
+            MORE LIKE THIS
+          </span>
+          <h2 className="font-display text-2xl sm:text-3xl font-semibold text-navy-900 mb-4">
             Other upcoming opportunities
           </h2>
           <div className="space-y-3">
@@ -339,6 +376,7 @@ export default function EventDetailPage() {
         </div>
       )}
 
+      {/* Sticky Bottom Action Bar for Mobile */}
       <StickyMobileActionBar event={event} />
     </div>
   );

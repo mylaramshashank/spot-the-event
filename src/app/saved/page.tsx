@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { EventItem } from "@/types";
 import { getEvents, getSavedEventIds } from "@/lib/storage";
 import { EventCardRow } from "@/components/events/EventCardRow";
-import { VenlixPixelLoader } from "@/components/common/VenlixLogo";
 
 export default function SavedPage() {
   const [savedEvents, setSavedEvents] = useState<EventItem[]>([]);
@@ -18,40 +17,40 @@ export default function SavedPage() {
       setSavedEvents(all.filter((e) => ids.includes(e.id)));
       setLoaded(true);
     };
+
     refresh();
     window.addEventListener("venlix_saved_updated", refresh);
     return () => window.removeEventListener("venlix_saved_updated", refresh);
   }, []);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* Header */}
       <div className="mb-8">
-        <p className="mb-1 text-[11px] font-semibold uppercase tracking-eyebrow text-signal-dark">
-          Local bookmarks
-        </p>
-        <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-5xl">
-          Saved events
+        <span className="text-[12px] font-semibold tracking-eyebrow uppercase text-emerald-600 block mb-1">
+          LOCAL BOOKMARKS
+        </span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-navy-900 tracking-tight">
+          Saved Events
         </h1>
-        <p className="mt-2 text-sm text-mist">
-          Stored on this device only. No account required.
+        <p className="mt-2 text-sm text-slate">
+          Events bookmarked directly on this device. No account or login required.
         </p>
       </div>
 
-      {!loaded ? (
-        <div className="flex justify-center py-16">
-          <VenlixPixelLoader />
-        </div>
-      ) : savedEvents.length === 0 ? (
-        <div className="mx-auto my-12 max-w-md rounded-2xl border border-line bg-paper px-8 py-10 text-center">
-          <p className="font-display text-2xl font-bold text-ink">No saved events yet</p>
-          <p className="mt-2 text-sm text-mist">
-            Tap the bookmark on any event card to keep it handy before the deadline.
+      {loaded && savedEvents.length === 0 ? (
+        <div className="my-12 p-8 bg-paper border border-rule rounded-3xl text-center max-w-md mx-auto shadow-sm">
+          <p className="text-2xl font-bold text-navy-900 mb-2">
+            No saved events yet
+          </p>
+          <p className="text-sm text-slate mb-6">
+            Tap the bookmark icon on any event card to keep it handy for quick registration before the deadline.
           </p>
           <Link
             href="/events"
-            className="mt-6 inline-flex h-11 items-center rounded-md bg-ink px-6 text-xs font-semibold text-white"
+            className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-navy-900 text-offwhite font-semibold text-xs tracking-wide hover:bg-navy-800 transition-colors shadow-xs"
           >
-            Explore events →
+            Explore upcoming events &rarr;
           </Link>
         </div>
       ) : (

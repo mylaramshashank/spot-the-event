@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { EventItem } from "@/types";
-import { getEventStatus, getDeadlineLabel, sanitizeExternalUrl } from "@/lib/utils";
+import { formatShortDate, getEventStatus, getDeadlineLabel, sanitizeExternalUrl } from "@/lib/utils";
 import { StatusBadge, TypeBadge } from "../common/StatusBadge";
 import { isEventSaved, toggleSaveEventId, trackClick } from "@/lib/storage";
 
@@ -19,7 +19,9 @@ export function EventCardRow({ event, showSaveButton = true }: EventCardRowProps
 
   useEffect(() => {
     setSaved(isEventSaved(event.id));
-    const handleSavedUpdate = () => setSaved(isEventSaved(event.id));
+    const handleSavedUpdate = () => {
+      setSaved(isEventSaved(event.id));
+    };
     window.addEventListener("venlix_saved_updated", handleSavedUpdate);
     return () => window.removeEventListener("venlix_saved_updated", handleSavedUpdate);
   }, [event.id]);
@@ -27,7 +29,8 @@ export function EventCardRow({ event, showSaveButton = true }: EventCardRowProps
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setSaved(toggleSaveEventId(event.id));
+    const isNowSaved = toggleSaveEventId(event.id);
+    setSaved(isNowSaved);
   };
 
   const handleRegisterClick = (e: React.MouseEvent) => {
@@ -36,76 +39,92 @@ export function EventCardRow({ event, showSaveButton = true }: EventCardRowProps
   };
 
   return (
-    <article className="group relative overflow-hidden rounded-xl border border-line bg-paper p-4 transition hover:border-ink/25 sm:p-5">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div className="group relative bg-paper border border-rule hover:border-navy-900/30 transition-all duration-200 rounded-2xl overflow-hidden mb-3.5 p-4 sm:p-5 shadow-xs hover:shadow-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Left side: Date stamp + Event Meta */}
         <div className="flex items-start gap-4">
-          <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-lg bg-ink text-white">
-            <span className="text-[10px] font-semibold uppercase tracking-eyebrow text-signal">
-              {new Date(event.start_at)
-                .toLocaleDateString("en-IN", { month: "short", timeZone: "Asia/Kolkata" })
-                .toUpperCase()}
+          {/* Flat Navy Date Stamp with smooth curved corners */}
+          <div className="shrink-0 w-16 h-16 bg-navy-900 text-offwhite flex flex-col items-center justify-center rounded-xl border border-navy-700 active:scale-[0.97] transition-transform shadow-xs">
+            <span className="text-[10px] font-semibold tracking-eyebrow uppercase text-emerald">
+              {new Date(event.start_at).toLocaleDateString("en-IN", { month: "short", timeZone: "Asia/Kolkata" }).toUpperCase()}
             </span>
-            <span className="mt-0.5 text-2xl font-bold leading-none">
-              {new Date(event.start_at).toLocaleDateString("en-IN", {
-                day: "2-digit",
-                timeZone: "Asia/Kolkata",
-              })}
+            <span className="text-2xl font-bold leading-none mt-0.5 text-offwhite">
+              {new Date(event.start_at).toLocaleDateString("en-IN", { day: "2-digit", timeZone: "Asia/Kolkata" })}
             </span>
           </div>
 
-          <div className="min-w-0 flex-1 space-y-1.5">
+          {/* Title & Key details */}
+          <div className="space-y-1.5 flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <TypeBadge type={event.type} />
               <StatusBadge status={status} label={deadlineLabel} />
             </div>
-            <h3 className="text-lg font-bold leading-snug text-ink transition group-hover:text-signal sm:text-xl">
-              <Link href={`/events/${event.slug}`}>
+
+            <h3 className="text-lg sm:text-xl font-bold text-navy-900 leading-snug group-hover:text-emerald-600 transition-colors">
+              <Link
+                href={`/events/${event.slug}`}
+                className="hover:text-emerald-600 transition-colors"
+              >
                 <span className="absolute inset-0" aria-hidden="true" />
                 {event.title}
               </Link>
             </h3>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-mist sm:text-sm">
-              <span className="font-semibold text-ink">{event.venue_name.split(",")[0]}</span>
+
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-slate">
+              <span className="font-semibold text-navy-900">{event.venue_name.split(",")[0]}</span>
               <span>·</span>
               <span>{event.fee_text}</span>
               {event.prize && (
                 <>
                   <span>·</span>
-                  <span className="max-w-[180px] truncate font-semibold text-signal">{event.prize}</span>
+                  <span className="text-emerald-600 font-semibold truncate max-w-[180px]">
+                    {event.prize}
+                  </span>
                 </>
               )}
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center justify-between gap-2 border-t border-line/60 pt-3 sm:justify-end sm:border-0 sm:pt-0">
+        {/* Right side: Actions */}
+        <div className="relative z-10 flex items-center justify-between sm:justify-end gap-2.5 pt-3 sm:pt-0 border-t sm:border-t-0 border-rule/60">
           {showSaveButton && (
             <button
               type="button"
               onClick={handleSaveToggle}
               aria-label={saved ? "Unsave event" : "Save event"}
-              className={`flex h-10 w-10 items-center justify-center rounded-md border transition ${
+              className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
                 saved
-                  ? "border-ink bg-ink text-white"
-                  : "border-line bg-paper text-mist hover:border-ink hover:text-ink"
+                  ? "bg-navy-900 text-offwhite border-navy-900 scale-105"
+                  : "border-rule text-slate hover:border-navy-900 hover:text-navy-900 bg-paper"
               }`}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill={saved ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
               </svg>
             </button>
           )}
+
           <a
             href={sanitizeExternalUrl(event.register_url)}
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleRegisterClick}
-            className="inline-flex h-10 items-center rounded-md bg-ink px-4 text-sm font-semibold text-white transition hover:bg-ink-soft active:scale-[0.98]"
+            className="inline-flex items-center justify-center h-9 px-4 rounded-full bg-navy-900 text-offwhite text-xs sm:text-sm font-semibold tracking-wide hover:bg-navy-800 active:scale-95 transition-all shadow-xs"
           >
-            Register →
+            Register &rarr;
           </a>
         </div>
       </div>
-    </article>
+    </div>
   );
 }

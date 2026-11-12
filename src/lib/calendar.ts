@@ -1,5 +1,4 @@
 import { EventItem } from "@/types";
-import { SITE } from "@/lib/site";
 
 export function getGoogleCalendarUrl(event: EventItem): string {
   const start = new Date(event.start_at).toISOString().replace(/-|:|\.\d\d\d/g, "");
@@ -7,7 +6,7 @@ export function getGoogleCalendarUrl(event: EventItem): string {
 
   const title = encodeURIComponent(event.title);
   const details = encodeURIComponent(
-    `${event.description}\n\nVenue: ${event.venue_name}\nRegister at: ${event.register_url}\nFeatured on ${SITE.name} by Venlix`
+    `${event.description}\n\nVenue: ${event.venue_name}\nRegister at: ${event.register_url}\nFeatured on Spot the Event by Venlix`
   );
   const location = encodeURIComponent(`${event.venue_name}, ${event.city}`);
 
@@ -24,11 +23,11 @@ export function downloadIcsFile(event: EventItem): void {
   const icsData = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    `PRODID:-//Venlix//${SITE.name}//EN`,
+    "PRODID:-//Venlix//Spot the Event//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${event.id}@${SITE.url.replace(/^https?:\/\//, "")}`,
+    `UID:${event.id}@spot.venlix.tech`,
     `DTSTAMP:${formatIcsDate(new Date().toISOString())}`,
     `DTSTART:${formatIcsDate(event.start_at)}`,
     `DTEND:${formatIcsDate(event.end_at)}`,

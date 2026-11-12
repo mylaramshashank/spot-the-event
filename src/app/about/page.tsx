@@ -1,96 +1,221 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { VenlixLogo } from "@/components/common/VenlixLogo";
 import { trackClick } from "@/lib/storage";
-import { SITE } from "@/lib/site";
 
 export default function AboutPage() {
+  const criteria = [
+    {
+      title: "Legitimate Venue & Infrastructure",
+      desc: "Every offline event must have a physical venue with proven capacity, power, and connectivity (e.g. T-Hub, IIIT-H, premier colleges, or co-working spaces). No phantom venues.",
+    },
+    {
+      title: "Zero Multi-Level Marketing or Up-selling",
+      desc: "We refuse events whose sole objective is pushing ₹40,000 bootcamp certificates or sales courses to vulnerable students.",
+    },
+    {
+      title: "Transparent Fees & Organizers",
+      desc: "We verify whether an event is genuinely free or upfront about its costs. If there is a registration fee, we clarify exactly what it pays for (food, server access, kit).",
+    },
+    {
+      title: "Real Judges and Practical Focus",
+      desc: "Hackathons and workshops must feature active practitioners, engineering leads, or startup founders who offer actionable feedback.",
+    },
+  ];
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* Header */}
       <div className="mb-8">
-        <p className="mb-1 text-[11px] font-semibold uppercase tracking-eyebrow text-signal-dark">
-          Behind the board
-        </p>
-        <h1 className="font-display text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
-          Why Spot the Event exists
+        <span className="text-[12px] font-sans font-semibold tracking-eyebrow uppercase text-emerald block mb-1">
+          BEHIND THE BOARD
+        </span>
+        <h1 className="font-display text-4xl sm:text-5xl font-semibold text-navy-900 tracking-tight">
+          Why Spot the Event Exists
         </h1>
       </div>
 
-      <div className="mb-12 space-y-4 rounded-xl border border-line bg-paper p-6 text-base leading-relaxed text-ink/90 sm:p-8">
+      {/* First-person narrative */}
+      <div className="bg-paper border border-rule p-6 sm:p-8 rounded-sm mb-12 space-y-4 text-base font-sans text-navy-900/90 leading-relaxed">
         <p>
-          If you follow tech in Hyderabad, you know the loop: watch a reel about a weekend hackathon,
-          comment for an AutoDM, get nothing — or a pile of spam.
+          If you follow tech in Hyderabad, you already know the frustration: you watch a reel about an exciting weekend hackathon, drop a comment to get an auto-DM bot link, and either receive nothing or get spammed with twenty irrelevant marketing messages.
         </p>
         <p>
-          <strong className="font-semibold text-ink">Spot the Event</strong> replaces that friction.
-          No bots. No generic 400-event dumps. Only events personally vetted and featured on{" "}
-          <a
-            href={SITE.curator.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-signal hover:underline"
-          >
-            {SITE.curator.handle}
-          </a>
-          .
+          I started <strong className="font-semibold text-navy-900">Spot the Event</strong> to replace that friction entirely. No bots, no marketing fluff, no generic lists of 400 events that nobody will ever attend. This board contains only the events I personally vet and feature in my reels on <a href="https://instagram.com/buildwithshashankk" target="_blank" rel="noopener noreferrer" className="text-emerald font-semibold hover:underline">@buildwithshashankk</a>.
         </p>
-        <p className="pt-2 text-sm text-mist">— {SITE.curator.name}, Co-founder at Venlix</p>
+        <p className="pt-2 text-sm text-slate">
+          &mdash; Shashank, Co-founder at Venlix
+        </p>
       </div>
 
-      <div className="mb-12 rounded-xl border border-ink-mute bg-ink p-6 text-white sm:p-8">
-        <VenlixLogo variant="footer" size={32} />
-        <h3 className="mt-4 font-display text-2xl font-bold">Built by Venlix</h3>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/70">
-          Venlix is a visual-first platform that connects founders and creators with video editors —
-          hired on timelines and cuts, not PDF resumes.
+      {/* Editorial Selection Criteria */}
+      <div className="mb-12">
+        <span className="text-[12px] font-sans font-semibold tracking-eyebrow uppercase text-slate block mb-1">
+          OUR EDITORIAL STANDARD
+        </span>
+        <h2 className="font-display text-2xl sm:text-3xl font-semibold text-navy-900 mb-6">
+          How we choose what makes the board
+        </h2>
+
+        <div className="space-y-4">
+          {criteria.map((item, idx) => (
+            <div key={idx} className="bg-paper border border-rule p-5 rounded-sm">
+              <div className="flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  ✓
+                </span>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-navy-900 mb-1">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm font-sans text-slate leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* About Venlix */}
+      <div className="bg-navy-900 text-offwhite p-6 sm:p-8 rounded-sm mb-12 border border-navy-700">
+        <div className="mb-4">
+          <VenlixLogo variant="footer" size={32} />
+        </div>
+        <h3 className="font-display text-2xl font-semibold text-offwhite mb-3">
+          Built by Venlix
+        </h3>
+        <p className="text-sm font-sans text-offwhite/80 leading-relaxed mb-6">
+          Venlix is a visual-first platform that connects tech founders and content creators with elite video editors. Instead of reviewing dry PDF resumes, founders hire editors based directly on timelines, motion samples, and retention cuts.
         </p>
         <a
-          href={SITE.venlix.url}
+          href="https://venlix.tech"
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackClick("venlix", undefined, "about_page_venlix_link")}
-          className="mt-6 inline-flex h-11 items-center rounded-md bg-signal px-5 text-xs font-semibold text-white hover:bg-signal-dark"
+          className="h-11 px-5 rounded-sm bg-emerald text-offwhite text-xs font-sans font-semibold inline-flex items-center hover:bg-emerald/90 transition-all"
         >
-          Explore Venlix →
+          Explore Venlix &rarr;
         </a>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-line bg-paper p-5 sm:p-6">
-          <h4 className="font-display text-xl font-bold text-ink">{SITE.curator.name}</h4>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-signal">
-            Curator & co-founder
-          </p>
-          <p className="mb-4 text-xs leading-relaxed text-mist">
-            Creator of {SITE.curator.handle}. Vets Hyderabad hackathons and builds student developer community.
-          </p>
-          <div className="space-y-2 border-t border-line pt-3 text-xs font-medium">
-            <a href={SITE.curator.instagram} target="_blank" rel="noopener noreferrer" className="block hover:text-signal">
-              Instagram →
-            </a>
-            <a href={SITE.curator.linkedin} target="_blank" rel="noopener noreferrer" className="block hover:text-signal">
-              LinkedIn →
-            </a>
-            <a href={SITE.curator.github} target="_blank" rel="noopener noreferrer" className="block hover:text-signal">
-              GitHub →
-            </a>
-            <a href={SITE.curator.email} className="block text-signal hover:underline">
-              Email
-            </a>
-          </div>
-        </div>
-        <div className="rounded-xl border border-line bg-paper p-5 sm:p-6">
-          <h4 className="font-display text-xl font-bold text-ink">Divyend</h4>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-signal">
-            Engineering & co-founder
-          </p>
-          <p className="mb-4 text-xs leading-relaxed text-mist">
-            Architecting Venlix platform systems, video pipelines, and editorial web experiences.
-          </p>
-          <a href={SITE.venlix.url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-ink hover:text-signal">
-            Venlix platform →
+      {/* Connect with Shashank */}
+      <div className="bg-paper border border-rule rounded-2xl p-6 sm:p-8 mb-12 shadow-xs">
+        <span className="text-[11px] font-sans font-semibold tracking-eyebrow uppercase text-emerald block mb-1">
+          LET&apos;S CONNECT
+        </span>
+        <h3 className="font-display text-2xl font-bold text-navy-900 mb-2">
+          Want to collaborate, feature an event, or connect?
+        </h3>
+        <p className="text-sm font-sans text-slate mb-6 leading-relaxed">
+          Whether you&apos;re organizing an engineering hackathon, college devfest, or want to discuss student developer ecosystems in Hyderabad, feel free to reach out directly:
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <a
+            href="https://www.linkedin.com/in/mylaramshashank/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-navy-900 text-offwhite text-xs font-semibold hover:bg-navy-800 transition-colors shadow-xs"
+          >
+            <Linkedin className="w-3.5 h-3.5 text-emerald" />
+            <span>LinkedIn</span>
           </a>
+          <a
+            href="https://github.com/mylaramshashank"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-navy-900 text-offwhite text-xs font-semibold hover:bg-navy-800 transition-colors shadow-xs"
+          >
+            <Github className="w-3.5 h-3.5 text-emerald" />
+            <span>GitHub</span>
+          </a>
+          <a
+            href="mailto:mylaramshashank@gmail.com"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-emerald text-white text-xs font-semibold hover:bg-emerald-600 transition-colors shadow-xs"
+          >
+            <Mail className="w-3.5 h-3.5" />
+            <span>Email</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Founders & Team */}
+      <div className="border-t border-rule pt-8">
+        <h3 className="font-display text-2xl font-semibold text-navy-900 mb-4">
+          The Team
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-paper border border-rule p-5 sm:p-6 rounded-2xl shadow-xs">
+            <h4 className="font-display text-xl font-bold text-navy-900">
+              Shashank
+            </h4>
+            <p className="text-xs font-sans text-emerald font-semibold uppercase tracking-wider mb-2">
+              Curator & Co-founder
+            </p>
+            <p className="text-xs font-sans text-slate leading-relaxed mb-4">
+              Creator of @buildwithshashankk, vetting hackathons across Hyderabad and building communities for student developers.
+            </p>
+            <div className="space-y-2 pt-2 border-t border-rule text-xs font-medium text-navy-900">
+              <a
+                href="https://instagram.com/buildwithshashankk"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-emerald transition-colors"
+              >
+                <span>@buildwithshashankk on Instagram &rarr;</span>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/mylaramshashank/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-emerald transition-colors"
+              >
+                <Linkedin className="w-3.5 h-3.5 text-navy-700" />
+                <span>linkedin.com/in/mylaramshashank</span>
+              </a>
+              <a
+                href="https://github.com/mylaramshashank"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-emerald transition-colors"
+              >
+                <Github className="w-3.5 h-3.5 text-navy-700" />
+                <span>github.com/mylaramshashank</span>
+              </a>
+              <a
+                href="mailto:mylaramshashank@gmail.com"
+                className="flex items-center gap-2 text-emerald font-semibold hover:underline"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Email</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="bg-paper border border-rule p-5 sm:p-6 rounded-2xl shadow-xs">
+            <h4 className="font-display text-xl font-bold text-navy-900">
+              Divyend
+            </h4>
+            <p className="text-xs font-sans text-emerald font-semibold uppercase tracking-wider mb-2">
+              Engineering & Co-founder
+            </p>
+            <p className="text-xs font-sans text-slate leading-relaxed mb-4">
+              Architecting Venlix’s platform systems, video pipelines, and high-performance editorial web experiences.
+            </p>
+            <div className="pt-2 border-t border-rule text-xs font-medium">
+              <a
+                href="https://venlix.tech"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-semibold text-navy-900 hover:text-emerald"
+              >
+                Venlix Platform &rarr;
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

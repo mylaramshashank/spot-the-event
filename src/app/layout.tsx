@@ -1,61 +1,38 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, IBM_Plex_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { SITE } from "@/lib/site";
 
-const display = Syne({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["500", "600", "700", "800"],
-  display: "swap",
-});
-
-const body = IBM_Plex_Sans({
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: `${SITE.name} · Hyderabad Tech Events`,
-    template: `%s · ${SITE.name}`,
-  },
-  description: SITE.description,
-  metadataBase: new URL(SITE.url),
-  applicationName: SITE.name,
-  authors: [{ name: SITE.curator.name, url: SITE.curator.instagram }],
-  keywords: [
-    "Hyderabad hackathons",
-    "Hyderabad tech events",
-    "meetups Hyderabad",
-    "workshops Hyderabad",
-    "buildwithshashankk",
-    "Venlix",
-    "T-Hub events",
-  ],
+  title: "Spot the Event by Venlix · Hyderabad Tech Events",
+  description:
+    "Curated tech events, hackathons, meetups and workshops in Hyderabad featured on @buildwithshashankk. Watch the reel, open the site, register in under 30 seconds.",
+  metadataBase: new URL("https://spot.venlix.tech"),
   openGraph: {
-    title: `${SITE.name} · Hyderabad Tech Events`,
-    description: SITE.description,
-    url: SITE.url,
-    siteName: SITE.name,
-    locale: SITE.locale,
+    title: "Spot the Event by Venlix · Hyderabad Tech Events",
+    description:
+      "Every Hyderabad tech event, hackathon and workshop from the reels in one place.",
+    url: "https://spot.venlix.tech",
+    siteName: "Spot the Event",
+    locale: "en_IN",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE.name} by Venlix`,
-    description: SITE.tagline,
+    title: "Spot the Event by Venlix",
+    description: "Hyderabad tech events, hackathons and meetups from the reels.",
   },
   manifest: "/manifest.json",
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-  },
-  alternates: {
-    canonical: SITE.url,
+    icon: "/favicon.ico",
   },
 };
 
@@ -63,7 +40,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#12151C",
+  themeColor: "#0B1530",
 };
 
 export default function RootLayout({
@@ -72,10 +49,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <body className="bg-chalk text-ink selection:bg-signal-soft selection:text-ink flex min-h-screen flex-col font-sans antialiased">
+    <html lang="en" className={`${jakarta.variable} font-sans`}>
+      <body className="bg-offwhite text-navy-900 selection:bg-emerald-100 selection:text-navy-900 flex flex-col min-h-screen antialiased">
         <Header />
-        <main className="w-full flex-1">{children}</main>
+        <main className="flex-1 w-full">{children}</main>
         <Footer />
       </body>
     </html>

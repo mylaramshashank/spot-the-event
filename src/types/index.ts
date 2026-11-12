@@ -40,8 +40,6 @@ export interface SuggestionItem {
   organizer: string;
   college?: string;
   contact?: string;
-  is_free?: boolean;
-  price?: string;
   status: 'pending' | 'approved' | 'rejected' | 'duplicate';
   created_at: string;
 }

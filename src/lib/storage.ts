@@ -1,7 +1,6 @@
 import { EventItem, SuggestionItem, ClickEventItem, ClickKind } from "@/types";
 import { SEED_EVENTS } from "./data/seed-events";
 import { formatShortDate } from "./utils";
-import { SITE } from "./site";
 
 const EVENTS_STORAGE_KEY = "venlix_spot_events_v1";
 const SAVED_STORAGE_KEY = "venlix_saved_events_v1";
@@ -181,7 +180,7 @@ export function getClickAnalytics(): {
   };
 }
 
-export function submitSuggestion(data: Omit<SuggestionItem, "id" | "status" | "created_at">): SuggestionItem {
+export function submitSuggestion(data: Omit<SuggestionItem, "id" | "status" | "created_at">): void {
   const item: SuggestionItem = {
     ...data,
     id: `sug-${Date.now()}`,
@@ -198,7 +197,6 @@ export function submitSuggestion(data: Omit<SuggestionItem, "id" | "status" | "c
       // ignore
     }
   }
-  return item;
 }
 
 export function getSuggestions(): SuggestionItem[] {
@@ -230,13 +228,13 @@ export function generateWeeklyDigest(events: EventItem[]): string {
       `${idx + 1}. ${evt.title.toUpperCase()}`,
       `Date: ${formatShortDate(evt.start_at)} | Venue: ${evt.venue_name}`,
       `Fee: ${evt.fee_text} | Deadline: ${formatShortDate(evt.deadline_at)}`,
-      `Register: ${SITE.url}/events/${evt.slug}\n`
+      `Register: https://spot.venlix.tech/events/${evt.slug}\n`
     );
   });
 
   lines.push(
     "Full list & reel breakdowns on the board:",
-    `${SITE.url}/events`,
+    "https://spot.venlix.tech/events",
     "\nNo chatter. Save your weekend and build something real."
   );
 

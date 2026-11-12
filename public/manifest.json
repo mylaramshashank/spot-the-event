@@ -4,8 +4,8 @@
   "description": "Hyderabad tech events, hackathons, and meetups from the reels",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#EEF1F4",
-  "theme_color": "#12151C",
+  "background_color": "#F7F4EC",
+  "theme_color": "#0B1530",
   "icons": [
     {
       "src": "/icon.svg",

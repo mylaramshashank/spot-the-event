@@ -1,33 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #eef1f4;
-  --foreground: #12151c;
-  --signal: #1fa97a;
-  --line: #d5dbe5;
-}
-
-html {
-  scroll-behavior: smooth;
+  --background: #F8FAFC;
+  --foreground: #0B1530;
+  --font-body: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-body), ui-sans-serif, sans-serif;
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
   min-height: 100vh;
 }
 
+/* Strict print-like hairline styling and focus ring */
 *:focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid #10B981 !important;
   outline-offset: 2px;
 }
 
+/* Hide scrollbar for clean horizontal snap chips */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -36,19 +36,56 @@ body {
   scrollbar-width: none;
 }
 
-/* Atmospheric grain for hero / section planes */
-.bg-grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+/* ── Hero Animations ── */
+
+/* Gentle floating bobble for Instagram card */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(2deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+.animate-float {
+  animation: float 5s ease-in-out infinite;
 }
 
-.bg-grid-ink {
-  background-image:
-    linear-gradient(rgba(18, 21, 28, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 21, 28, 0.045) 1px, transparent 1px);
-  background-size: 48px 48px;
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float-delayed {
+  animation: float-delayed 4s ease-in-out 1s infinite;
 }
 
+/* Slow drifting for gradient orbs */
+@keyframes drift-slow {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(20px, -15px); }
+  50% { transform: translate(-10px, 10px); }
+  75% { transform: translate(15px, 5px); }
+}
+.animate-drift-slow {
+  animation: drift-slow 15s ease-in-out infinite;
+}
+
+@keyframes drift-reverse {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-15px, 10px); }
+  50% { transform: translate(10px, -20px); }
+  75% { transform: translate(-5px, -10px); }
+}
+.animate-drift-reverse {
+  animation: drift-reverse 18s ease-in-out infinite;
+}
+
+/* Slow pulsing glow */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

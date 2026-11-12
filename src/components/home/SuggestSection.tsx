@@ -6,130 +6,82 @@ import { submitSuggestion } from "@/lib/storage";
 
 export function SuggestSection() {
   const [eventName, setEventName] = useState("");
-  const [isFree, setIsFree] = useState(true);
-  const [price, setPrice] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    // Silent drop if bot filled honeypot
     if (honeypot) {
       setSubmitted(true);
       return;
     }
     if (!eventName.trim()) return;
-    if (!isFree && !price.trim()) {
-      setError("Please specify the ticket price for this paid event.");
-      return;
-    }
 
-    setSubmitting(true);
-    const payload = {
+    submitSuggestion({
       name: eventName.trim().slice(0, 120),
       url: "Quick inline submission",
       date_text: "TBD",
       organizer: "Community suggestion",
-      is_free: isFree,
-      price: isFree ? undefined : price.trim(),
-    };
-    submitSuggestion(payload);
+    });
 
-    try {
-      await fetch("/api/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } catch {
-      // local queue still saved
-    } finally {
-      setSubmitting(false);
-      setSubmitted(true);
-      setEventName("");
-      setPrice("");
-    }
+    setSubmitted(true);
+    setEventName("");
   };
 
   return (
-    <section className="border-t border-line px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
-      <div className="mx-auto max-w-xl">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-eyebrow text-mist">
-          Suggest an event
-        </p>
-        <h2 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-          Know something that deserves the reel?
+    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-rule">
+      <div className="max-w-xl">
+        <span className="text-[12px] font-sans font-semibold tracking-eyebrow uppercase text-slate block mb-1">
+          06 / SUGGEST AN EVENT
+        </span>
+        <h2 className="font-display text-3xl sm:text-4xl font-semibold text-navy-900 tracking-tight">
+          Know an event that deserves the reel?
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-mist">
-          Drop the name of a Hyderabad hackathon, fest, or meetup. If it fits the bar, it lands in the next reel.
+        <p className="mt-3 text-sm font-sans text-slate leading-relaxed">
+          Tell us the name of the upcoming hackathon, college fest, or meetup in Hyderabad. If it fits our editorial standards, it will be in the next reel.
         </p>
 
         {submitted ? (
-          <div className="mt-6 rounded-xl border border-signal/30 bg-signal-soft px-4 py-4 text-sm text-ink">
+          <div className="mt-6 p-4 bg-emerald-100 border border-emerald/30 rounded-sm text-sm font-sans text-navy-900">
             Got it. If it fits, it will be in the next reel.
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-            {error && (
-              <div className="rounded-md border border-alert/30 bg-alert/10 px-3 py-2 text-xs font-medium text-alert">
-                {error}
-              </div>
-            )}
+          <form onSubmit={handleSubmit} className="mt-6 flex flex-col sm:flex-row gap-2">
             <div className="hidden" aria-hidden="true">
-              <input tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="text"
-                value={eventName}
-                onChange={(e) => setEventName(e.target.value)}
-                placeholder="e.g. JNTUH HackQuest 2026"
-                required
-                className="h-12 flex-1 rounded-md border border-line bg-paper px-4 text-sm text-ink placeholder:text-mist-soft focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/30"
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
               />
-              <button
-                type="submit"
-                disabled={submitting}
-                className="h-12 shrink-0 rounded-md bg-ink px-5 text-sm font-semibold text-white transition hover:bg-ink-soft disabled:opacity-70"
-              >
-                {submitting ? "Submitting…" : "Submit idea"}
-              </button>
             </div>
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-mist">Cost</span>
-              <button
-                type="button"
-                onClick={() => { setIsFree(true); setPrice(""); }}
-                className={`rounded-md px-3 py-1.5 text-xs font-semibold ${isFree ? "bg-ink text-white" : "border border-line text-mist"}`}
-              >
-                Free
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsFree(false)}
-                className={`rounded-md px-3 py-1.5 text-xs font-semibold ${!isFree ? "bg-ink text-white" : "border border-line text-mist"}`}
-              >
-                Paid
-              </button>
-              {!isFree && (
-                <input
-                  type="text"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  placeholder="Price (e.g. ₹299)"
-                  required={!isFree}
-                  className="h-9 min-w-[160px] flex-1 rounded-md border border-line bg-paper px-3 text-xs"
-                />
-              )}
-            </div>
+            <input
+              type="text"
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
+              placeholder="e.g. JNTUH HackQuest 2026"
+              required
+              className="flex-1 h-12 px-5 bg-paper border border-rule text-navy-900 placeholder:text-slate-500/60 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-emerald focus:border-emerald shadow-xs"
+            />
+            <button
+              type="submit"
+              className="h-12 px-6 bg-navy-900 text-offwhite text-sm font-semibold rounded-full hover:bg-navy-800 active:scale-95 transition-all shrink-0 shadow-xs"
+            >
+              Submit idea
+            </button>
           </form>
         )}
 
-        <Link href="/suggest" className="mt-4 inline-flex text-xs font-medium text-mist underline-offset-4 hover:text-ink hover:underline">
-          Or fill the full form with links →
-        </Link>
+        <div className="mt-3">
+          <Link
+            href="/suggest"
+            className="text-xs font-sans font-medium text-slate hover:text-navy-900 underline underline-offset-4"
+          >
+            Or fill out the full details with links &rarr;
+          </Link>
+        </div>
       </div>
     </section>
   );

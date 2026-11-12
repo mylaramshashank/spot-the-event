@@ -24,49 +24,51 @@ export function TypographicPoster({
     aspectRatio === "square"
       ? "aspect-square"
       : aspectRatio === "video"
-        ? "aspect-[16/9]"
-        : "aspect-[21/9] sm:aspect-[24/9]";
+      ? "aspect-[16/9]"
+      : "aspect-[21/9] sm:aspect-[24/9]";
 
   const isCompact = aspectRatio === "video" || aspectRatio === "square";
 
   return (
     <div
-      className={`relative flex w-full flex-col justify-between overflow-hidden bg-ink text-white ${aspectClass} ${
+      className={`relative w-full ${aspectClass} bg-navy-900 text-offwhite ${
         isCompact ? "p-4 sm:p-5" : "p-5 sm:p-7"
-      } ${className}`}
+      } flex flex-col justify-between overflow-hidden border border-rule ${className}`}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(31,169,122,0.28),transparent_42%)]" />
-      <div className="absolute inset-0 bg-grid-ink opacity-30" />
+      {/* Subtle geometric pixel watermark */}
+      <div className="absolute top-4 right-4 opacity-15 pointer-events-none">
+        <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+          <rect x="2" y="2" width="13" height="13" rx="2" fill="#FCFAF5" />
+          <rect x="17" y="17" width="13" height="13" rx="2" fill="#17795A" />
+        </svg>
+      </div>
 
-      <div className="relative z-10 flex items-center justify-between">
-        <span
-          className={`${isCompact ? "text-[10px]" : "text-[11px]"} font-semibold uppercase tracking-eyebrow text-signal`}
-        >
-          Hyderabad · {type}
+      <div className="flex items-center justify-between z-10">
+        <span className={`${isCompact ? "text-[10px]" : "text-[11px]"} font-sans font-semibold tracking-eyebrow uppercase text-emerald`}>
+          HYDERABAD · {type.toUpperCase()}
         </span>
-        <span
-          className={`${isCompact ? "text-[10px] px-1.5 py-0.5" : "text-xs px-2 py-0.5"} border border-white/20 font-medium text-white/80`}
-        >
+        <span className={`${isCompact ? "text-[10px] px-1.5 py-0.5" : "text-xs px-2 py-0.5"} font-sans font-medium text-offwhite/80 border border-offwhite/20 rounded-sm`}>
           {formatShortDate(date)}
         </span>
       </div>
 
-      <div className="relative z-10 my-auto max-w-xl py-1.5">
+      <div className="my-auto py-1.5 z-10 max-w-xl">
         <h3
           className={
-            titleSize ||
-            (isCompact
-              ? "line-clamp-2 text-base font-bold leading-snug tracking-tight sm:text-lg"
-              : "font-display text-2xl font-bold leading-[1.1] tracking-tight sm:text-3xl lg:text-4xl")
+            titleSize
+              ? titleSize
+              : isCompact
+              ? "text-base sm:text-lg font-bold leading-snug text-offwhite tracking-tight line-clamp-2"
+              : "font-display text-2xl sm:text-3xl lg:text-4xl font-semibold leading-[1.1] text-offwhite tracking-tight"
           }
         >
           {title}
         </h3>
       </div>
 
-      <div className="relative z-10 flex items-center justify-between border-t border-white/15 pt-2 text-[11px] text-white/65">
-        <span className="max-w-[70%] truncate">{venue}</span>
-        <span className="text-[9px] font-semibold uppercase tracking-eyebrow text-signal">
+      <div className="flex items-center justify-between border-t border-offwhite/15 pt-2 z-10 text-[11px] font-sans text-offwhite/70">
+        <span className="truncate max-w-[70%]">{venue}</span>
+        <span className="uppercase text-[9px] tracking-eyebrow text-emerald font-semibold">
           Spot the Event
         </span>
       </div>

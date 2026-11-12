@@ -2,19 +2,22 @@
 
 import React from "react";
 import { trackClick } from "@/lib/storage";
-import { SITE } from "@/lib/site";
 
 export function VenlixStrip() {
+  const handleClick = () => {
+    trackClick("venlix", undefined, "home_venlix_strip");
+  };
+
   return (
-    <div className="border-t border-line bg-chalk px-4 py-6 text-center">
-      <p className="text-sm text-mist">
+    <div className="w-full py-6 px-4 border-t border-rule bg-offwhite text-center">
+      <p className="text-xs sm:text-sm font-sans text-slate">
         Spot the Event is built by{" "}
         <a
-          href={SITE.venlix.url}
+          href="https://venlix.tech"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => trackClick("venlix", undefined, "home_venlix_strip")}
-          className="font-semibold text-ink underline-offset-2 hover:text-signal hover:underline"
+          onClick={handleClick}
+          className="font-semibold text-navy-900 hover:text-emerald underline underline-offset-2 transition-colors"
         >
           Venlix
         </a>

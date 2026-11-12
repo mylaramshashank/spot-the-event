@@ -10,58 +10,75 @@ interface PickTrackSectionProps {
 
 export function PickTrackSection({ events }: PickTrackSectionProps) {
   const hackathonsCount = events.filter((e) => e.type === "hackathon" && e.status === "published").length;
-  const meetupsCount = events.filter(
-    (e) => (e.type === "meetup" || e.type === "workshop") && e.status === "published"
-  ).length;
+  const meetupsCount = events.filter((e) => (e.type === "meetup" || e.type === "workshop") && e.status === "published").length;
 
   return (
-    <section className="border-t border-line px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-eyebrow text-mist">
-          Pick a track
-        </p>
-        <h2 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-          What are you showing up for?
+    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-rule">
+      <div className="mb-8">
+        <span className="text-[12px] font-sans font-semibold tracking-eyebrow uppercase text-slate block mb-1">
+          02 / PICK YOUR TRACK
+        </span>
+        <h2 className="font-display text-3xl sm:text-4xl font-semibold text-navy-900 tracking-tight">
+          What are you building for?
         </h2>
+      </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Link
-            href="/hackathons"
-            className="group relative overflow-hidden rounded-xl border border-line bg-ink p-6 text-white transition hover:border-ink sm:p-8"
-          >
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-signal/25 blur-3xl transition group-hover:bg-signal/35" />
-            <p className="relative text-[11px] font-semibold uppercase tracking-eyebrow text-signal">
-              High stakes · {hackathonsCount} listed
-            </p>
-            <h3 className="relative mt-3 font-display text-2xl font-bold leading-tight sm:text-3xl">
-              Hackathons & overnight sprints
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Track 1: Hackathons */}
+        <Link
+          href="/hackathons"
+          className="group relative bg-paper border border-rule hover:border-navy-900/40 p-6 sm:p-8 rounded-2xl shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] font-semibold tracking-eyebrow uppercase text-emerald-600">
+                HIGH STAKES
+              </span>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-600">
+                {hackathonsCount} open now
+              </span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-bold text-navy-900 group-hover:text-emerald-600 transition-colors leading-tight">
+              Hackathons & Overnight Sprints
             </h3>
-            <p className="relative mt-3 max-w-md text-sm leading-relaxed text-white/65">
-              Form a squad, ship for 36 hours, pitch at T-Hub, IIIT-H, JNTU — real prizes, real judges.
+            <p className="mt-3 text-sm text-slate leading-relaxed">
+              Form a squad, write code for 36 hours, pitch to real startup judges at T-Hub, IIIT-H, and JNTU. Big prizes and zero fluff.
             </p>
-            <span className="relative mt-8 inline-flex text-sm font-semibold text-signal">
-              Explore hackathons →
-            </span>
-          </Link>
+          </div>
 
-          <Link
-            href="/events?type=meetup"
-            className="group rounded-xl border border-line bg-paper p-6 transition hover:border-ink/30 sm:p-8"
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-eyebrow text-mist">
-              Practical learning · {meetupsCount} listed
-            </p>
-            <h3 className="mt-3 font-display text-2xl font-bold leading-tight text-ink sm:text-3xl">
-              Meetups & hands-on workshops
+          <div className="mt-8 pt-4 border-t border-rule/60 flex items-center justify-between text-xs font-semibold text-navy-900 group-hover:text-emerald-600">
+            <span>Explore Hackathons</span>
+            <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+          </div>
+        </Link>
+
+        {/* Track 2: Meetups & Workshops */}
+        <Link
+          href="/events?type=meetup"
+          className="group relative bg-paper border border-rule hover:border-navy-900/40 p-6 sm:p-8 rounded-2xl shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] font-sans font-semibold tracking-eyebrow uppercase text-navy-900">
+                PRACTICAL LEARNING
+              </span>
+              <span className="text-xs font-sans font-semibold px-2.5 py-0.5 rounded-full bg-rule/50 text-navy-900">
+                {meetupsCount} open now
+              </span>
+            </div>
+            <h3 className="font-display text-2xl sm:text-3xl font-semibold text-navy-900 group-hover:text-emerald transition-colors leading-tight">
+              Meetups & Hands-on Workshops
             </h3>
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-mist">
-              Weekend sessions across Hitec City and Gachibowli — stacks, systems, and the local builder crowd.
+            <p className="mt-3 text-sm font-sans text-slate leading-relaxed">
+              Weekend sessions in Hitec City and Gachibowli. Master modern stacks, discuss system architecture, and meet Hyderabad developers.
             </p>
-            <span className="mt-8 inline-flex text-sm font-semibold text-ink group-hover:text-signal">
-              Browse meetups →
-            </span>
-          </Link>
-        </div>
+          </div>
+
+          <div className="mt-8 pt-4 border-t border-rule/60 flex items-center justify-between text-xs font-sans font-semibold text-navy-900">
+            <span>Browse Meetups & Workshops</span>
+            <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+          </div>
+        </Link>
       </div>
     </section>
   );

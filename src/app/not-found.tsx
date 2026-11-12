@@ -2,28 +2,28 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-md px-4 py-24 text-center">
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-eyebrow text-alert">
-        404 · Not found
-      </p>
-      <h1 className="font-display text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
-        Page not found
+    <div className="max-w-md mx-auto px-4 py-24 text-center">
+      <span className="text-[12px] font-sans font-semibold tracking-eyebrow uppercase text-rust block mb-2">
+        404 · PAGE NOT FOUND
+      </span>
+      <h1 className="font-display text-4xl sm:text-5xl font-semibold text-navy-900 mb-4 tracking-tight">
+        Event Not Found
       </h1>
-      <p className="mt-4 text-sm leading-relaxed text-mist">
-        The link may have expired or the reel code was mistyped. Head back to the board for open events.
+      <p className="text-sm font-sans text-slate leading-relaxed mb-8">
+        The link may have expired or the reel URL was mistyped. Head back to the curated board to find the latest open events.
       </p>
-      <div className="mt-8 flex items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3">
         <Link
           href="/events"
-          className="inline-flex h-11 items-center rounded-md bg-ink px-5 text-xs font-semibold text-white"
+          className="h-11 px-5 rounded-sm bg-navy-900 text-offwhite text-xs font-sans font-semibold inline-flex items-center hover:bg-navy-700 transition-colors"
         >
-          Browse events →
+          Browse All Events &rarr;
         </Link>
         <Link
           href="/"
-          className="inline-flex h-11 items-center rounded-md border border-line bg-paper px-5 text-xs font-semibold text-ink"
+          className="h-11 px-5 rounded-sm border border-rule bg-paper text-navy-900 text-xs font-sans font-semibold inline-flex items-center hover:border-navy-900/40 transition-colors"
         >
-          Home
+          Return Home
         </Link>
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Hero } from "@/components/home/Hero";
 import { ThisWeekSection } from "@/components/home/ThisWeekSection";
 import { PickTrackSection } from "@/components/home/PickTrackSection";
@@ -11,26 +11,20 @@ import { SuggestSection } from "@/components/home/SuggestSection";
 import { VenlixStrip } from "@/components/home/VenlixStrip";
 import { getEvents } from "@/lib/storage";
 import { EventItem } from "@/types";
-import { getEventStatus } from "@/lib/utils";
 
 export default function HomePage() {
   const [events, setEvents] = useState<EventItem[]>([]);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const list = getEvents().filter((e) => e.status === "published");
-    setEvents(list);
-    setReady(true);
+    setEvents(getEvents());
   }, []);
 
-  const upcoming = events
-    .filter((e) => getEventStatus(e) !== "ended")
-    .sort((a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime());
+  const openCount = events.filter((e) => e.status === "published").length;
 
   return (
     <div className="w-full">
-      <Hero />
-      <ThisWeekSection events={ready ? upcoming : []} loading={!ready} />
+      <Hero openCount={openCount} />
+      <ThisWeekSection events={events} />
       <PickTrackSection events={events} />
       <FromReelsSection events={events} />
       <HowItWorksSection />
