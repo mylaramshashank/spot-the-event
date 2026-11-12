@@ -5,6 +5,8 @@ import { SEED_EVENTS } from "./data/seed-events";
 import { sanitizeExternalUrl } from "./utils";
 
 const EVENTS_KEY = "venlix_spot_events_v1";
+const SEED_VERSION_KEY = "venlix_spot_seed_version";
+const SEED_VERSION = "2026-11-12-paytm-v1";
 const SAVED_KEY = "venlix_spot_saved_v1";
 const SUGGESTIONS_KEY = "venlix_spot_suggestions_v1";
 const CLICKS_KEY = "venlix_spot_clicks_v1";
@@ -68,13 +70,19 @@ function sanitizeEventUrls(event: EventItem): EventItem {
 export function getEvents(): EventItem[] {
   if (typeof window === "undefined") return SEED_EVENTS;
   try {
+    const storedVersion = localStorage.getItem(SEED_VERSION_KEY);
+    if (storedVersion !== SEED_VERSION) {
+      localStorage.setItem(EVENTS_KEY, JSON.stringify(SEED_EVENTS));
+      localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
+      return SEED_EVENTS;
+    }
     const raw = localStorage.getItem(EVENTS_KEY);
     if (!raw) {
       localStorage.setItem(EVENTS_KEY, JSON.stringify(SEED_EVENTS));
       return SEED_EVENTS;
     }
     const parsed = safeParseArray(raw, isValidEventItem);
-    if (!parsed || parsed.length === 0) {
+    if (!parsed) {
       return SEED_EVENTS;
     }
     return parsed.map(sanitizeEventUrls);

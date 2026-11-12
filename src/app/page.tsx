@@ -10,6 +10,7 @@ import { JoinChannelSection } from "@/components/home/JoinChannelSection";
 import { SuggestSection } from "@/components/home/SuggestSection";
 import { VenlixStrip } from "@/components/home/VenlixStrip";
 import { getEvents } from "@/lib/storage";
+import { getEventStatus } from "@/lib/utils";
 import { EventItem } from "@/types";
 
 export default function HomePage() {
@@ -19,7 +20,9 @@ export default function HomePage() {
     setEvents(getEvents());
   }, []);
 
-  const openCount = events.filter((e) => e.status === "published").length;
+  const openCount = events.filter(
+    (e) => e.status === "published" && getEventStatus(e) !== "ended"
+  ).length;
 
   return (
     <div className="w-full">

@@ -245,7 +245,7 @@ function EventsPageContent() {
             The next one usually lands on Sunday evening. Join the WhatsApp Channel so you never miss a drop.
           </p>
           <a
-            href="https://whatsapp.com/channel/0029Vaexample"
+            href="https://whatsapp.com/channel/0029Vb9d8yhK5cDAGTE94z47"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackClick("whatsapp", undefined, "empty_state_whatsapp")}

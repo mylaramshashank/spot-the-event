@@ -79,7 +79,7 @@ export function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://whatsapp.com/channel/0029Vaexample"
+                    href="https://whatsapp.com/channel/0029Vb9d8yhK5cDAGTE94z47"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => handleOutbound("whatsapp", "footer_whatsapp")}

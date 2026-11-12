@@ -87,7 +87,11 @@ export function Hero({ openCount }: HeroProps) {
               </span>
               <span>
                 Updated today &middot;{" "}
-                <strong className="text-navy-900 font-bold">{openCount} verified events open</strong>
+                <strong className="text-navy-900 font-bold">
+                  {openCount > 0
+                    ? `${openCount} verified ${openCount === 1 ? "event" : "events"} open`
+                    : "Featured reel events live"}
+                </strong>
               </span>
             </motion.div>
 
@@ -130,7 +134,7 @@ export function Hero({ openCount }: HeroProps) {
               className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3"
             >
               <a
-                href="https://whatsapp.com/channel/0029Vaexample"
+                href="https://whatsapp.com/channel/0029Vb9d8yhK5cDAGTE94z47"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleWhatsApp}

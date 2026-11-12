@@ -228,6 +228,18 @@ export default function EventDetailPage() {
                 Watch reel &rarr;
               </a>
             )}
+
+            {isEnded && sanitizeExternalUrl(event.register_url) !== "#" && (
+              <a
+                href={sanitizeExternalUrl(event.register_url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleRegister}
+                className="h-11 px-5 rounded-full border border-rule bg-paper text-slate font-semibold text-xs flex items-center gap-2 hover:text-navy-900 hover:border-navy-900/40 transition-colors shadow-xs"
+              >
+                Official Event Page &rarr;
+              </a>
+            )}
           </div>
         </div>
       </div>

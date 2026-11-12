@@ -39,7 +39,7 @@ export function JoinChannelSection() {
 
         <div className="shrink-0 flex flex-col items-start md:items-end gap-2">
           <a
-            href="https://whatsapp.com/channel/0029Vaexample"
+            href="https://whatsapp.com/channel/0029Vb9d8yhK5cDAGTE94z47"
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleJoin}

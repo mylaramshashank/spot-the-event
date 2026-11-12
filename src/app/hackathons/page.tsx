@@ -5,7 +5,7 @@ import Link from "next/link";
 import { EventItem } from "@/types";
 import { getEvents, trackClick } from "@/lib/storage";
 import { EventCardRow } from "@/components/events/EventCardRow";
-import { formatDate, formatShortDate, getDeadlineLabel, sanitizeExternalUrl } from "@/lib/utils";
+import { formatShortDate, getEventStatus, sanitizeExternalUrl } from "@/lib/utils";
 
 function CountdownDisplay({ targetDate }: { targetDate: string }) {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number }>({
@@ -58,6 +58,7 @@ export default function HackathonsPage() {
   }, []);
 
   const nextHackathon = hackathons[0];
+  const isNextEnded = nextHackathon ? getEventStatus(nextHackathon) === "ended" : false;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -87,8 +88,16 @@ export default function HackathonsPage() {
               </h2>
             </div>
             <div className="flex flex-col sm:items-end">
-              <span className="text-xs text-slate mb-1 font-medium">Registration closes in:</span>
-              <CountdownDisplay targetDate={nextHackathon.deadline_at} />
+              {isNextEnded ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-slate bg-surface border border-rule">
+                  Registrations Closed
+                </span>
+              ) : (
+                <>
+                  <span className="text-xs text-slate mb-1 font-medium">Registration closes in:</span>
+                  <CountdownDisplay targetDate={nextHackathon.deadline_at} />
+                </>
+              )}
             </div>
           </div>
 
@@ -116,21 +125,38 @@ export default function HackathonsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <a
-              href={sanitizeExternalUrl(nextHackathon.register_url)}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick("register", nextHackathon.id, "hackathons_featured_card")}
-              className="h-11 px-6 rounded-full bg-emerald text-white font-semibold text-xs tracking-wide hover:bg-emerald-600 active:scale-95 transition-all inline-flex items-center justify-center shadow-xs"
-            >
-              Register on Official Site &rarr;
-            </a>
+            {isNextEnded ? (
+              <span className="h-11 px-6 rounded-full bg-rule text-slate font-semibold text-xs tracking-wide inline-flex items-center justify-center cursor-not-allowed">
+                Registrations Closed
+              </span>
+            ) : (
+              <a
+                href={sanitizeExternalUrl(nextHackathon.register_url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("register", nextHackathon.id, "hackathons_featured_card")}
+                className="h-11 px-6 rounded-full bg-emerald text-white font-semibold text-xs tracking-wide hover:bg-emerald-600 active:scale-95 transition-all inline-flex items-center justify-center shadow-xs"
+              >
+                Register on Official Site &rarr;
+              </a>
+            )}
             <Link
               href={`/events/${nextHackathon.slug}`}
               className="h-11 px-5 rounded-full border border-rule bg-paper text-navy-900 font-semibold text-xs hover:border-navy-900/40 inline-flex items-center justify-center transition-colors shadow-xs"
             >
               Full Details
             </Link>
+            {nextHackathon.reel_url && (
+              <a
+                href={sanitizeExternalUrl(nextHackathon.reel_url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("instagram", nextHackathon.id, "hackathons_featured_reel")}
+                className="h-11 px-5 rounded-full border border-rule bg-paper text-navy-900 font-semibold text-xs hover:border-navy-900/40 inline-flex items-center justify-center transition-colors shadow-xs"
+              >
+                Watch Reel &rarr;
+              </a>
+            )}
           </div>
         </div>
       )}

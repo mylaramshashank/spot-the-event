@@ -7,7 +7,7 @@ import { trackClick } from "@/lib/storage";
 export default function CommunityPage() {
   const [copied, setCopied] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const channelUrl = "https://whatsapp.com/channel/0029Vaexample";
+  const channelUrl = "https://whatsapp.com/channel/0029Vb9d8yhK5cDAGTE94z47";
 
   const handleJoin = () => {
     trackClick("whatsapp", undefined, "community_page_join");

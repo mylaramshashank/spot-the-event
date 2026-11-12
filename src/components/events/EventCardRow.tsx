@@ -114,15 +114,21 @@ export function EventCardRow({ event, showSaveButton = true }: EventCardRowProps
             </button>
           )}
 
-          <a
-            href={sanitizeExternalUrl(event.register_url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleRegisterClick}
-            className="inline-flex items-center justify-center h-9 px-4 rounded-full bg-navy-900 text-offwhite text-xs sm:text-sm font-semibold tracking-wide hover:bg-navy-800 active:scale-95 transition-all shadow-xs"
-          >
-            Register &rarr;
-          </a>
+          {status === "ended" ? (
+            <span className="inline-flex items-center justify-center h-9 px-4 rounded-full bg-surface text-slate border border-rule text-xs sm:text-sm font-semibold">
+              Registrations Closed
+            </span>
+          ) : (
+            <a
+              href={sanitizeExternalUrl(event.register_url)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleRegisterClick}
+              className="inline-flex items-center justify-center h-9 px-4 rounded-full bg-navy-900 text-offwhite text-xs sm:text-sm font-semibold tracking-wide hover:bg-navy-800 active:scale-95 transition-all shadow-xs"
+            >
+              Register &rarr;
+            </a>
+          )}
         </div>
       </div>
     </div>
