@@ -2,6 +2,48 @@ import { EventItem } from '@/types';
 
 export const SEED_EVENTS: EventItem[] = [
   {
+    id: 'evt-startup-buildathon-india-2026',
+    slug: 'google-deepmind-cloud-startup-buildathon-india-2026',
+    title: 'Google DeepMind × Google Cloud | Startup Buildathon India 2026',
+    type: 'hackathon',
+    start_at: '2026-11-20T09:00:00+05:30',
+    end_at: '2026-11-21T19:00:00+05:30',
+    venue_name: 'Hyderabad City Buildathon, Venue TBA to Shortlisted Teams (Finale at Google Bengaluru)',
+    venue_map_url: '',
+    city: 'Hyderabad',
+    mode: 'in_person',
+    fee_text: 'Free',
+    is_free: true,
+    eligibility: 'Aspiring entrepreneurs, early-stage startups, solo founders & teams building an AI-powered solution',
+    team_size: 'Solo founders or Teams',
+    prize: 'USD 10,000 × 10 teams (USD 5,000 cash + USD 5,000 Google AI & Cloud credits)',
+    organizer: 'Google DeepMind × Google Cloud',
+    register_url: 'https://startupbuildathon.com/',
+    deadline_at: '2026-11-13T23:59:00+05:30',
+    reel_url: '',
+    reel_code: '03',
+    poster_url: '/posters/startup-buildathon-india-2026.jpg',
+    description: `A nationwide opportunity hosted by Google DeepMind × Google Cloud for aspiring entrepreneurs, founders, and early-stage startups to build an AI-powered product with Google AI, Google Cloud, expert mentors, and industry guidance.
+
+Why Participate:
+• 2-day City Buildathon: 20–21 November 2026 (Hyderabad is one of the 10 participating cities)
+• Hands-on access to Google AI & Google Cloud
+• Mentorship from experts, VCs, and industry leaders
+• Top teams progress to Regional Showcases (23, 25, 27 Nov in 3 cities)
+• Grand Finale at Google Bengaluru (2 December 2026)
+
+Rewards & Prizes:
+• Top 10 teams receive USD 10,000 each — USD 5,000 cash + USD 5,000 in Google AI & Cloud credits
+
+Who Can Apply:
+Aspiring entrepreneurs, early-stage startups, solo founders, and teams building an AI-powered solution. Participation is FREE. Applications close 13 November 2026.`,
+    featured_note: 'Google DeepMind × Google Cloud Buildathon stopping in Hyderabad (20–21 Nov) — top 10 teams win USD 10,000 each plus a shot at the Google Bengaluru finale. Applications close 13 Nov!',
+    verified: true,
+    status: 'published',
+    created_at: '2026-11-12T16:18:00+05:30',
+    updated_at: '2026-11-12T16:18:00+05:30',
+  },
+  {
     id: 'evt-piperocket-google-2026',
     slug: 'beyond-search-to-sell-2-piperocket-google',
     title: 'Beyond Search to Sell 2.0: PipeRocket x Google',
