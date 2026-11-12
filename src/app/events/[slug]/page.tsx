@@ -282,24 +282,24 @@ export default function EventDetailPage() {
           Key Facts
         </h2>
 
-        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm font-sans">
-          <div>
-            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">When</dt>
-            <dd className="mt-1 font-medium text-navy-900">
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 font-sans">
+          <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
+            <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">When</dt>
+            <dd className="mt-1 text-sm font-normal text-slate">
               {formatDate(event.start_at)} ({formatTime(event.start_at)})
             </dd>
           </div>
 
-          <div>
-            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Where</dt>
-            <dd className="mt-1 font-medium text-navy-900">
+          <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
+            <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Where</dt>
+            <dd className="mt-1 text-sm font-normal text-slate">
               {event.venue_name}
               {event.venue_map_url && (
                 <a
                   href={sanitizeExternalUrl(event.venue_map_url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-xs text-emerald hover:underline mt-0.5"
+                  className="block text-xs font-medium text-emerald hover:underline mt-1"
                 >
                   View on Google Maps &rarr;
                 </a>
@@ -307,36 +307,36 @@ export default function EventDetailPage() {
             </dd>
           </div>
 
-          <div>
-            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Fee</dt>
-            <dd className="mt-1 font-medium text-navy-900">{event.fee_text}</dd>
+          <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
+            <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Fee</dt>
+            <dd className="mt-1 text-sm font-normal text-slate">{event.fee_text}</dd>
           </div>
 
-          <div>
-            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Eligibility</dt>
-            <dd className="mt-1 font-medium text-navy-900">{event.eligibility}</dd>
+          <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
+            <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Eligibility</dt>
+            <dd className="mt-1 text-sm font-normal text-slate">{event.eligibility}</dd>
           </div>
 
-          <div>
-            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Team Size</dt>
-            <dd className="mt-1 font-medium text-navy-900">{event.team_size}</dd>
+          <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
+            <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Team Size</dt>
+            <dd className="mt-1 text-sm font-normal text-slate">{event.team_size}</dd>
           </div>
 
           {event.prize && (
-            <div>
-              <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Prize Pool</dt>
-              <dd className="mt-1 font-medium text-emerald">{event.prize}</dd>
+            <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
+              <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Prize Pool</dt>
+              <dd className="mt-1 text-sm font-normal text-emerald">{event.prize}</dd>
             </div>
           )}
 
-          <div>
-            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Organizer</dt>
-            <dd className="mt-1 font-medium text-navy-900">{event.organizer}</dd>
+          <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
+            <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Organizer</dt>
+            <dd className="mt-1 text-sm font-normal text-slate">{event.organizer}</dd>
           </div>
 
           <div>
-            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Registration Deadline</dt>
-            <dd className="mt-1 font-medium text-rust">
+            <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Registration Deadline</dt>
+            <dd className="mt-1 text-sm font-normal text-rust">
               {formatDate(event.deadline_at)} ({deadlineLabel})
             </dd>
           </div>
