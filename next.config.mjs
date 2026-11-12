@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const cspHeader = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co",
+  "connect-src 'self' https://*.supabase.co https://vitals.vercel-insights.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
