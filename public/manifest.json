@@ -1,0 +1,16 @@
+{
+  "name": "Spot the Event by Venlix",
+  "short_name": "Spot the Event",
+  "description": "Hyderabad tech events, hackathons, and meetups from the reels",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#EEF1F4",
+  "theme_color": "#12151C",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
