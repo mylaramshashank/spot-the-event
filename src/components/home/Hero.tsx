@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { trackClick } from "@/lib/storage";
 
@@ -25,11 +26,12 @@ function InstagramProfileCard() {
       <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-amber-400 via-pink-500 to-purple-600 opacity-20 group-hover:opacity-35 blur-md transition-opacity -z-10" />
 
       {/* The enhanced crisp profile card image */}
-      <img
+      <Image
         src="/instagram-card-enhanced.png"
         alt="Shashank Instagram Profile (@buildwithshashankk)"
         width={872}
         height={898}
+        priority
         className="w-full h-auto block"
       />
     </motion.a>

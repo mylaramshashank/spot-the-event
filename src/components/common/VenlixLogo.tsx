@@ -68,7 +68,7 @@ export function VenlixLogo({ variant = "mark", className = "", size = 28 }: Venl
   );
 }
 
-export function VenlixPixelLoader({ size = 20 }: { size?: number }) {
+export function VenlixPixelLoader() {
   // Venlix pixel motif loader: 5 small squares fading between navy and emerald
   return (
     <div className="inline-flex items-center gap-1.5" role="status" aria-label="Loading">

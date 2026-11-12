@@ -1,104 +1,98 @@
--- Supabase Schema for Spot the Event by Venlix
--- Hyderabad tech events, hackathons, meetups and workshops
+-- Supabase PostgreSQL Schema for Spot the Event by Venlix
 
--- Enable UUID extension
-create extension if not exists "uuid-ossp";
-
--- Table: events
+-- 1. Events Table
 create table if not exists public.events (
-  id uuid primary key default uuid_generate_v4(),
-  slug text unique not null,
+  id uuid default gen_random_uuid() primary key,
+  slug text not null unique,
   title text not null,
   type text not null check (type in ('hackathon', 'meetup', 'workshop', 'conference')),
   start_at timestamptz not null,
   end_at timestamptz not null,
   venue_name text not null,
   venue_map_url text,
-  city text default 'Hyderabad',
+  city text not null default 'Hyderabad',
   mode text not null check (mode in ('in_person', 'online', 'hybrid')),
   fee_text text not null default 'Free',
   is_free boolean not null default true,
-  eligibility text default 'Open to all college students',
-  team_size text default '1 - 4 members',
+  eligibility text not null default 'Open to all',
+  team_size text not null default 'Individual',
   prize text,
   organizer text not null,
-  register_url text not null,
+  register_url text not null check (register_url ~* '^https?://'),
   deadline_at timestamptz not null,
   reel_url text,
-  reel_code text unique,
+  reel_code text,
   poster_url text,
   description text not null,
-  featured_note text,
+  featured_note text not null default '',
   verified boolean not null default true,
-  status text not null default 'published' check (status in ('draft', 'published', 'hidden')),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  status text not null check (status in ('draft', 'published', 'hidden')) default 'published',
+  created_at timestamptz default now() not null,
+  updated_at timestamptz default now() not null
 );
 
--- Table: suggestions
+-- Index for fast slug lookups & date ordering
+create index if not exists idx_events_slug on public.events (slug);
+create index if not exists idx_events_status_start on public.events (status, start_at);
+
+-- 2. Suggestions Table
 create table if not exists public.suggestions (
-  id uuid primary key default uuid_generate_v4(),
-  name text not null,
-  url text not null,
-  date_text text not null,
-  organizer text not null,
-  college text,
-  contact text,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected', 'duplicate')),
-  created_at timestamptz not null default now()
+  id uuid default gen_random_uuid() primary key,
+  name text not null check (char_length(name) between 2 and 120),
+  is_free boolean not null default true,
+  price text check (price is null or char_length(price) <= 60),
+  url text not null check (char_length(url) <= 500 and url ~* '^https?://'),
+  date_text text not null check (char_length(date_text) <= 100),
+  organizer text not null check (char_length(organizer) between 2 and 100),
+  college text check (college is null or char_length(college) <= 120),
+  contact text check (contact is null or char_length(contact) <= 120),
+  status text not null check (status in ('pending', 'approved', 'rejected', 'duplicate')) default 'pending',
+  created_at timestamptz default now() not null
 );
 
--- Table: click_events
+-- 3. Click Analytics Table (Zero-PII outbound tracking)
 create table if not exists public.click_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid default gen_random_uuid() primary key,
   event_id uuid references public.events(id) on delete set null,
   kind text not null check (kind in ('register', 'whatsapp', 'instagram', 'venlix', 'calendar', 'share')),
-  source text default 'web',
-  created_at timestamptz not null default now()
+  source text not null check (char_length(source) <= 80),
+  created_at timestamptz default now() not null
 );
 
--- Enable Row Level Security (RLS)
+-- 4. Row Level Security (RLS)
 alter table public.events enable row level security;
 alter table public.suggestions enable row level security;
 alter table public.click_events enable row level security;
 
--- Policies for events:
--- Public can read only published events
-create policy "Allow public read published events"
-  on public.events for select
-  using (status = 'published');
+-- Events policies
+drop policy if exists "Public can read published events" on public.events;
+create policy "Public can read published events"
+on public.events for select
+using (status = 'published');
 
--- Admins can do all on events (verified by app_metadata role)
-create policy "Allow authenticated admins full access to events"
-  on public.events for all
-  using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+drop policy if exists "Admins have full control over events" on public.events;
+create policy "Admins have full control over events"
+on public.events for all
+using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
 
--- Policies for suggestions:
--- Anyone can insert a suggestion (review queue)
-create policy "Allow public insert suggestions"
-  on public.suggestions for insert
-  with check (true);
+-- Suggestions policies
+drop policy if exists "Public can insert suggestions" on public.suggestions;
+create policy "Public can insert suggestions"
+on public.suggestions for insert
+with check (status = 'pending');
 
--- Only admins can read or update suggestions
-create policy "Allow authenticated admins full access to suggestions"
-  on public.suggestions for all
-  using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+drop policy if exists "Admins can view and manage suggestions" on public.suggestions;
+create policy "Admins can view and manage suggestions"
+on public.suggestions for all
+using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
 
--- Policies for click_events:
--- Public can insert click analytics
-create policy "Allow public insert click events"
-  on public.click_events for insert
-  with check (true);
+-- Click tracking policies
+drop policy if exists "Public can log outbound clicks" on public.click_events;
+create policy "Public can log outbound clicks"
+on public.click_events for insert
+with check (true);
 
--- Only authenticated admins can read click events
-create policy "Allow authenticated admins read click events"
-  on public.click_events for select
-  using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
-
--- Indexes for performance
-create index if not exists idx_events_status on public.events(status);
-create index if not exists idx_events_start_at on public.events(start_at);
-create index if not exists idx_events_type on public.events(type);
-create index if not exists idx_events_slug on public.events(slug);
-create index if not exists idx_events_reel_code on public.events(reel_code);
-create index if not exists idx_click_events_kind on public.click_events(kind);
+drop policy if exists "Admins can view analytics" on public.click_events;
+create policy "Admins can view analytics"
+on public.click_events for select
+using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');

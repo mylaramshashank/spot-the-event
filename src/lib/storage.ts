@@ -1,147 +1,243 @@
+"use client";
+
 import { EventItem, SuggestionItem, ClickEventItem, ClickKind } from "@/types";
 import { SEED_EVENTS } from "./data/seed-events";
-import { formatShortDate } from "./utils";
+import { sanitizeExternalUrl } from "./utils";
 
-const EVENTS_STORAGE_KEY = "venlix_spot_events_v1";
-const SAVED_STORAGE_KEY = "venlix_saved_events_v1";
-const SUGGESTIONS_STORAGE_KEY = "venlix_suggestions_v1";
-const CLICKS_STORAGE_KEY = "venlix_click_events_v1";
+const EVENTS_KEY = "venlix_spot_events_v1";
+const SAVED_KEY = "venlix_spot_saved_v1";
+const SUGGESTIONS_KEY = "venlix_spot_suggestions_v1";
+const CLICKS_KEY = "venlix_spot_clicks_v1";
 
-function safeSetItem(key: string, value: string): void {
-  if (typeof window === "undefined") return;
+function safeParseArray<T>(raw: string | null, validator: (item: unknown) => item is T): T[] | null {
+  if (!raw) return null;
   try {
-    localStorage.setItem(key, value);
-  } catch (err) {
-    // Gracefully handle Safari Private Browsing quota/security error
-    console.warn(`[storage] Failed to write key "${key}" to localStorage:`, err);
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    return parsed.filter(validator);
+  } catch {
+    return null;
   }
 }
 
-// In-memory fallback
-let memoryEvents: EventItem[] = [...SEED_EVENTS];
-let memorySuggestions: SuggestionItem[] = [];
-let memoryClicks: ClickEventItem[] = [];
+function isValidEventItem(item: unknown): item is EventItem {
+  if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+  const e = item as Record<string, unknown>;
+  return (
+    typeof e.id === "string" &&
+    typeof e.slug === "string" &&
+    typeof e.title === "string" &&
+    typeof e.type === "string" &&
+    typeof e.start_at === "string" &&
+    typeof e.end_at === "string" &&
+    typeof e.deadline_at === "string" &&
+    typeof e.venue_name === "string" &&
+    typeof e.register_url === "string" &&
+    typeof e.status === "string"
+  );
+}
 
+function isValidSuggestionItem(item: unknown): item is SuggestionItem {
+  if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+  const s = item as Record<string, unknown>;
+  return (
+    typeof s.id === "string" &&
+    typeof s.name === "string" &&
+    typeof s.url === "string" &&
+    typeof s.status === "string" &&
+    typeof s.created_at === "string"
+  );
+}
+
+function isValidClickItem(item: unknown): item is ClickEventItem {
+  if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+  const c = item as Record<string, unknown>;
+  return typeof c.id === "string" && typeof c.kind === "string" && typeof c.source === "string";
+}
+
+function sanitizeEventUrls(event: EventItem): EventItem {
+  return {
+    ...event,
+    register_url: sanitizeExternalUrl(event.register_url),
+    venue_map_url: event.venue_map_url ? sanitizeExternalUrl(event.venue_map_url) : undefined,
+    reel_url: event.reel_url ? sanitizeExternalUrl(event.reel_url) : undefined,
+  };
+}
+
+// 1. Events
 export function getEvents(): EventItem[] {
-  if (typeof window === "undefined") {
-    return memoryEvents;
-  }
+  if (typeof window === "undefined") return SEED_EVENTS;
   try {
-    const raw = localStorage.getItem(EVENTS_STORAGE_KEY);
+    const raw = localStorage.getItem(EVENTS_KEY);
     if (!raw) {
-      safeSetItem(EVENTS_STORAGE_KEY, JSON.stringify(SEED_EVENTS));
+      localStorage.setItem(EVENTS_KEY, JSON.stringify(SEED_EVENTS));
       return SEED_EVENTS;
     }
-    return JSON.parse(raw);
+    const parsed = safeParseArray(raw, isValidEventItem);
+    if (!parsed || parsed.length === 0) {
+      return SEED_EVENTS;
+    }
+    return parsed.map(sanitizeEventUrls);
   } catch {
-    return memoryEvents;
+    return SEED_EVENTS;
   }
 }
 
 export function getEventBySlug(slug: string): EventItem | undefined {
-  const events = getEvents();
-  return events.find((e) => e.slug === slug);
+  if (typeof slug !== "string" || !slug.trim()) return undefined;
+  return getEvents().find((e) => e.slug === slug);
 }
 
 export function getEventByReelCode(code: string): EventItem | undefined {
-  const events = getEvents();
-  return events.find((e) => e.reel_code?.toLowerCase() === code.toLowerCase());
+  if (typeof code !== "string") return undefined;
+  const clean = code.trim();
+  if (!/^[a-zA-Z0-9_-]{1,32}$/.test(clean)) return undefined;
+  return getEvents().find(
+    (e) => e.reel_code === clean || e.reel_code === clean.padStart(2, "0")
+  );
 }
 
 export function saveEvent(event: EventItem): void {
-  const events = getEvents();
-  const index = events.findIndex((e) => e.id === event.id);
-  let updated: EventItem[];
-  if (index >= 0) {
-    updated = [...events];
-    updated[index] = { ...event, updated_at: new Date().toISOString() };
-  } else {
-    updated = [event, ...events];
+  if (typeof window === "undefined" || !isValidEventItem(event)) return;
+  try {
+    const sanitized = sanitizeEventUrls(event);
+    const events = getEvents();
+    const index = events.findIndex((e) => e.id === sanitized.id);
+    if (index >= 0) {
+      events[index] = { ...sanitized, updated_at: new Date().toISOString() };
+    } else {
+      events.unshift(sanitized);
+    }
+    localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+  } catch {
+    // Ignore storage quota errors
   }
-  memoryEvents = updated;
-  safeSetItem(EVENTS_STORAGE_KEY, JSON.stringify(updated));
 }
 
 export function deleteEvent(id: string): void {
-  const events = getEvents();
-  const updated = events.filter((e) => e.id !== id);
-  memoryEvents = updated;
-  safeSetItem(EVENTS_STORAGE_KEY, JSON.stringify(updated));
+  if (typeof window === "undefined" || typeof id !== "string") return;
+  try {
+    const events = getEvents().filter((e) => e.id !== id);
+    localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+  } catch {
+    // Ignore storage errors
+  }
 }
 
+// 2. Saved Events (Bookmarked by visitor)
 export function getSavedEventIds(): string[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(SAVED_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const raw = localStorage.getItem(SAVED_KEY);
+    const parsed = safeParseArray(raw, (v): v is string => typeof v === "string");
+    return parsed || [];
   } catch {
     return [];
   }
 }
 
-export function toggleSaveEventId(id: string): boolean {
-  if (typeof window === "undefined") return false;
+export function isEventSaved(eventId: string): boolean {
+  return getSavedEventIds().includes(eventId);
+}
+
+export function toggleSaveEventId(eventId: string): boolean {
+  if (typeof window === "undefined" || typeof eventId !== "string") return false;
+  const saved = getSavedEventIds();
+  const exists = saved.includes(eventId);
+  const next = exists ? saved.filter((id) => id !== eventId) : [...saved, eventId];
   try {
-    const ids = getSavedEventIds();
-    let newIds: string[];
-    let isSaved = false;
-    if (ids.includes(id)) {
-      newIds = ids.filter((item) => item !== id);
-      isSaved = false;
-    } else {
-      newIds = [...ids, id];
-      isSaved = true;
-    }
-    safeSetItem(SAVED_STORAGE_KEY, JSON.stringify(newIds));
-    window.dispatchEvent(new Event("venlix_saved_updated"));
-    return isSaved;
+    localStorage.setItem(SAVED_KEY, JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent("venlix_saved_updated"));
   } catch {
-    return false;
+    // Ignore storage errors
+  }
+  return !exists;
+}
+
+// 3. Community Suggestions
+export function getSuggestions(): SuggestionItem[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(SUGGESTIONS_KEY);
+    return safeParseArray(raw, isValidSuggestionItem) || [];
+  } catch {
+    return [];
   }
 }
 
-export function isEventSaved(id: string): boolean {
-  if (typeof window === "undefined") return false;
-  return getSavedEventIds().includes(id);
-}
-
-export function trackClick(kind: ClickKind, eventId?: string, source: string = "web"): void {
-  const clickItem: ClickEventItem = {
-    id: `clk-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    event_id: eventId,
-    kind,
-    source,
+export function submitSuggestion(
+  data: Omit<SuggestionItem, "id" | "status" | "created_at">
+): SuggestionItem {
+  const newItem: SuggestionItem = {
+    id: `sug-${Date.now()}`,
+    name: String(data.name || "").trim().slice(0, 120),
+    url: sanitizeExternalUrl(data.url) !== "#" ? sanitizeExternalUrl(data.url) : String(data.url || "").slice(0, 500),
+    date_text: String(data.date_text || "").trim().slice(0, 100),
+    organizer: String(data.organizer || "").trim().slice(0, 100),
+    college: data.college ? String(data.college).trim().slice(0, 120) : undefined,
+    contact: data.contact ? String(data.contact).trim().slice(0, 120) : undefined,
+    status: "pending",
     created_at: new Date().toISOString(),
   };
 
-  memoryClicks.push(clickItem);
   if (typeof window !== "undefined") {
     try {
-      const raw = localStorage.getItem(CLICKS_STORAGE_KEY);
-      const existing: ClickEventItem[] = raw ? JSON.parse(raw) : [];
-      safeSetItem(CLICKS_STORAGE_KEY, JSON.stringify([clickItem, ...existing]));
+      const current = getSuggestions();
+      localStorage.setItem(SUGGESTIONS_KEY, JSON.stringify([newItem, ...current].slice(0, 200)));
     } catch {
-      // ignore
+      // Ignore storage errors
     }
+  }
+  return newItem;
+}
+
+export function updateSuggestionStatus(
+  id: string,
+  status: SuggestionItem["status"]
+): void {
+  if (typeof window === "undefined") return;
+  try {
+    const list = getSuggestions().map((s) => (s.id === id ? { ...s, status } : s));
+    localStorage.setItem(SUGGESTIONS_KEY, JSON.stringify(list));
+  } catch {
+    // Ignore storage errors
   }
 }
 
-export function getClickAnalytics(): {
-  totalClicks: number;
-  byKind: Record<ClickKind, number>;
-  topEvents: { id: string; title: string; clicks: number }[];
-} {
-  let clicks: ClickEventItem[] = memoryClicks;
-  if (typeof window !== "undefined") {
-    try {
-      const raw = localStorage.getItem(CLICKS_STORAGE_KEY);
-      if (raw) clicks = JSON.parse(raw);
-    } catch {
-      // fallback to memory
-    }
+// 4. Lightweight Click Tracking
+export function trackClick(kind: ClickKind, eventId?: string, source = "web"): void {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = localStorage.getItem(CLICKS_KEY);
+    const current = safeParseArray(raw, isValidClickItem) || [];
+    const newClick: ClickEventItem = {
+      id: `clk-${Date.now()}`,
+      event_id: eventId,
+      kind,
+      source: String(source).slice(0, 80),
+      created_at: new Date().toISOString(),
+    };
+    const next = [newClick, ...current].slice(0, 500);
+    localStorage.setItem(CLICKS_KEY, JSON.stringify(next));
+  } catch {
+    // Ignore quota errors
   }
+}
 
-  const byKind: Record<ClickKind, number> = {
+export function getClickStats(): ClickEventItem[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(CLICKS_KEY);
+    return safeParseArray(raw, isValidClickItem) || [];
+  } catch {
+    return [];
+  }
+}
+
+export function getClickAnalytics() {
+  const clicks = getClickStats();
+  const events = getEvents();
+  const byKind = {
     register: 0,
     whatsapp: 0,
     instagram: 0,
@@ -149,94 +245,59 @@ export function getClickAnalytics(): {
     calendar: 0,
     share: 0,
   };
-
-  const eventCountMap: Record<string, number> = {};
+  const clicksByEventId: Record<string, number> = {};
 
   clicks.forEach((c) => {
-    if (byKind[c.kind] !== undefined) {
-      byKind[c.kind]++;
+    if (c.kind in byKind) {
+      byKind[c.kind as ClickKind] += 1;
     }
-    if (c.event_id && c.kind === "register") {
-      eventCountMap[c.event_id] = (eventCountMap[c.event_id] || 0) + 1;
+    if (c.kind === "register" && c.event_id) {
+      clicksByEventId[c.event_id] = (clicksByEventId[c.event_id] || 0) + 1;
     }
   });
 
-  const events = getEvents();
-  const topEvents = Object.entries(eventCountMap)
-    .map(([id, count]) => {
-      const evt = events.find((e) => e.id === id);
-      return {
-        id,
-        title: evt ? evt.title : "Unknown event",
-        clicks: count,
-      };
-    })
-    .sort((a, b) => b.clicks - a.clicks);
+  const topEvents = Object.entries(clicksByEventId)
+    .map(([id, count]) => ({
+      id,
+      title: events.find((e) => e.id === id)?.title || id,
+      clicks: count,
+    }))
+    .sort((a, b) => b.clicks - a.clicks)
+    .slice(0, 10);
 
   return {
     totalClicks: clicks.length,
     byKind,
     topEvents,
+    recent: clicks.slice(0, 15),
   };
 }
 
-export function submitSuggestion(data: Omit<SuggestionItem, "id" | "status" | "created_at">): void {
-  const item: SuggestionItem = {
-    ...data,
-    id: `sug-${Date.now()}`,
-    status: "pending",
-    created_at: new Date().toISOString(),
-  };
-  memorySuggestions.push(item);
-  if (typeof window !== "undefined") {
-    try {
-      const raw = localStorage.getItem(SUGGESTIONS_STORAGE_KEY);
-      const existing: SuggestionItem[] = raw ? JSON.parse(raw) : [];
-      safeSetItem(SUGGESTIONS_STORAGE_KEY, JSON.stringify([item, ...existing]));
-    } catch {
-      // ignore
-    }
-  }
-}
-
-export function getSuggestions(): SuggestionItem[] {
-  if (typeof window === "undefined") return memorySuggestions;
-  try {
-    const raw = localStorage.getItem(SUGGESTIONS_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : memorySuggestions;
-  } catch {
-    return memorySuggestions;
-  }
-}
-
-export function updateSuggestionStatus(id: string, status: SuggestionItem["status"]): void {
-  const list = getSuggestions();
-  const updated = list.map((item) => (item.id === id ? { ...item, status } : item));
-  memorySuggestions = updated;
-  safeSetItem(SUGGESTIONS_STORAGE_KEY, JSON.stringify(updated));
-}
-
+// 5. WhatsApp Weekly Digest Generator
 export function generateWeeklyDigest(events: EventItem[]): string {
-  const upcoming = events.filter((e) => e.status === "published");
-  const lines: string[] = [
-    "Hyderabad Tech Events & Hackathons This Week",
-    "Curated by @buildwithshashankk · Venlix\n",
-  ];
+  const upcoming = events
+    .filter((e) => e.status === "published")
+    .sort((a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime())
+    .slice(0, 5);
 
-  upcoming.slice(0, 5).forEach((evt, idx) => {
-    lines.push(
-      `${idx + 1}. ${evt.title.toUpperCase()}`,
-      `Date: ${formatShortDate(evt.start_at)} | Venue: ${evt.venue_name}`,
-      `Fee: ${evt.fee_text} | Deadline: ${formatShortDate(evt.deadline_at)}`,
-      `Register: https://spot.venlix.tech/events/${evt.slug}\n`
-    );
+  let text = `*Spot the Event · This Week's Hyderabad Lineup*\n`;
+  text += `_Curated by @buildwithshashankk · Built by Venlix_\n\n`;
+
+  upcoming.forEach((e, idx) => {
+    const dateStr = new Date(e.start_at).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      weekday: "short",
+      timeZone: "Asia/Kolkata",
+    });
+    text += `*${idx + 1}. ${e.title}*\n`;
+    text += `Date: ${dateStr} | Venue: ${e.venue_name.split(",")[0]}\n`;
+    text += `Entry: ${e.fee_text}${e.prize ? ` | Prize: ${e.prize}` : ""}\n`;
+    text += `Details & Link: https://spot.venlix.tech/events/${e.slug}\n\n`;
   });
 
-  lines.push(
-    "Full list & reel breakdowns on the board:",
-    "https://spot.venlix.tech/events",
-    "\nNo chatter. Save your weekend and build something real."
-  );
+  text += `Explore all events: https://spot.venlix.tech/events\n`;
+  text += `Forward this message to your college dev groups!`;
 
-  return lines.join("\n");
+  return text;
 }

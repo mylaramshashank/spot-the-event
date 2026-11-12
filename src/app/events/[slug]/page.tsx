@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { EventItem } from "@/types";
-import { getEventBySlug, getEvents, isEventSaved, toggleSaveEventId, trackClick } from "@/lib/storage";
+import { getEvents, isEventSaved, toggleSaveEventId, trackClick } from "@/lib/storage";
 import { formatDate, formatTime, getEventStatus, getDeadlineLabel, sanitizeExternalUrl } from "@/lib/utils";
 import { StatusBadge, TypeBadge } from "@/components/common/StatusBadge";
 import { TypographicPoster } from "@/components/common/TypographicPoster";
@@ -61,14 +61,15 @@ export default function EventDetailPage() {
     const shareText = encodeURIComponent(
       `Check out ${event.title} in Hyderabad!\nDate: ${formatDate(event.start_at)}\nVenue: ${event.venue_name}\nRegister: https://spot.venlix.tech/events/${event.slug}`
     );
-    window.open(`https://api.whatsapp.com/send?text=${shareText}`, "_blank");
+    window.open(`https://api.whatsapp.com/send?text=${shareText}`, "_blank", "noopener,noreferrer");
   };
 
   const handleCopyLink = () => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
-      setShareCopied(true);
-      setTimeout(() => setShareCopied(false), 2000);
+    if (typeof window !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+      }).catch(() => {});
     }
   };
 

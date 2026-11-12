@@ -5,7 +5,7 @@ import Link from "next/link";
 import { EventItem } from "@/types";
 import { getEvents, trackClick } from "@/lib/storage";
 import { EventCardRow } from "@/components/events/EventCardRow";
-import { formatDate, formatShortDate, getDeadlineLabel } from "@/lib/utils";
+import { formatDate, formatShortDate, getDeadlineLabel, sanitizeExternalUrl } from "@/lib/utils";
 
 function CountdownDisplay({ targetDate }: { targetDate: string }) {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number }>({
@@ -117,7 +117,7 @@ export default function HackathonsPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <a
-              href={nextHackathon.register_url}
+              href={sanitizeExternalUrl(nextHackathon.register_url)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackClick("register", nextHackathon.id, "hackathons_featured_card")}

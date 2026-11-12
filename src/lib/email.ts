@@ -1,139 +1,154 @@
-export interface SuggestionEmailData {
+// Email Notification Service via Resend API (free tier: 3,000 emails/month)
+// Configure RESEND_API_KEY and NOTIFICATION_EMAIL in .env.local or deployment environment.
+
+interface SuggestionEmailPayload {
   name: string;
-  url?: string;
-  date_text?: string;
-  organizer?: string;
+  is_free: boolean;
+  price?: string;
+  url: string;
+  date_text: string;
+  organizer: string;
   college?: string;
   contact?: string;
-  is_free?: boolean;
-  price?: string;
 }
 
-export interface SendEmailResult {
-  success: boolean;
+function stripHeaderControls(str: string): string {
+  return str.replace(/[\r\n\0\x00-\x1F\x7F]+/g, " ").trim();
+}
+
+function getSafeHttpHref(rawUrl: string): string | null {
+  try {
+    const parsed = new URL(rawUrl.trim());
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.toString();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function sendSuggestionNotification(data: SuggestionEmailPayload): Promise<{
   delivered: boolean;
   reason?: string;
-  id?: string;
-  error?: string;
-}
+}> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const toEmail = process.env.NOTIFICATION_EMAIL?.trim() || "mylaramshashank@gmail.com";
+  const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || "Spot the Event <onboarding@resend.dev>";
 
-export async function sendSuggestionNotification(
-  data: SuggestionEmailData
-): Promise<SendEmailResult> {
-  const recipient = process.env.NOTIFICATION_EMAIL || "mylaramshashank@gmail.com";
-  const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "Spot The Event <onboarding@resend.dev>";
+  const cleanName = stripHeaderControls(data.name).slice(0, 120);
+  const priceLabel = data.is_free ? "FREE" : `PAID (${data.price || "Price specified"})`;
+  const subject = `[Spot the Event] New Event Suggestion: ${cleanName} (${stripHeaderControls(priceLabel).slice(0, 60)})`;
 
-  const isFree = data.is_free !== false;
-  const costLabel = isFree ? "Free" : `Paid (${data.price || "Price not specified"})`;
-  const cleanName = (data.name || "").replace(/[\r\n]+/g, " ").trim().slice(0, 160);
-  const cleanCost = costLabel.replace(/[\r\n]+/g, " ").trim().slice(0, 80);
-  const subject = `[Spot The Event] New Suggestion: ${cleanName} (${cleanCost})`;
-
-  const textBody = [
-    `NEW EVENT SUGGESTION RECEIVED`,
-    `=================================`,
-    `Event Name:      ${data.name}`,
-    `Cost:            ${costLabel}`,
-    data.price ? `Price:           ${data.price}` : null,
-    `Link / URL:      ${data.url || "N/A"}`,
-    `Dates / Timeline:${data.date_text || "TBD"}`,
-    `Organizer:       ${data.organizer || "Community suggestion"}`,
-    `College/Campus:  ${data.college || "N/A"}`,
-    `Contact Details: ${data.contact || "N/A"}`,
-    `Submitted At:    ${new Date().toISOString()}`,
-    `=================================`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const safeHref = getSafeHttpHref(data.url);
+  const urlBlockHtml = safeHref
+    ? `<a href="${escapeHtml(safeHref)}" style="color: #17795a; text-decoration: underline;">${escapeHtml(safeHref)}</a>`
+    : `<span>${escapeHtml(data.url || "N/A")}</span>`;
 
   const htmlBody = `
     <!DOCTYPE html>
     <html>
       <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #0b1530; margin: 0; padding: 24px; }
-          .card { background-color: #ffffff; max-width: 600px; margin: 0 auto; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); word-wrap: break-word; overflow-wrap: break-word; }
-          .header { background-color: #0b1530; color: #ffffff; padding: 24px; word-break: break-word; }
-          .header h1 { margin: 0; font-size: 20px; font-weight: 700; word-break: break-word; }
-          .header p { margin: 6px 0 0; font-size: 13px; color: #17795a; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-          .content { padding: 24px; }
-          .row { display: flex; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
-          .label { width: 140px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; shrink: 0; }
-          .value { flex: 1; font-size: 14px; font-weight: 500; color: #0b1530; word-break: break-word; overflow-wrap: break-word; }
-          .badge-free { display: inline-block; padding: 3px 10px; background-color: #ecfdf5; color: #047857; border-radius: 9999px; font-size: 12px; font-weight: 700; }
-          .badge-paid { display: inline-block; padding: 3px 10px; background-color: #fef2f2; color: #b91c1c; border-radius: 9999px; font-size: 12px; font-weight: 700; word-break: break-word; }
-          .footer { padding: 16px 24px; background-color: #f8fafc; font-size: 12px; color: #94a3b8; text-align: center; border-top: 1px solid #f1f5f9; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #0b1530; background: #f8fafc; padding: 24px; }
+          .card { max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; }
+          .header { background: #0b1530; color: #ffffff; padding: 24px; }
+          .badge { display: inline-block; background: #17795a; color: #ffffff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 99px; margin-bottom: 10px; }
+          .title { font-size: 20px; font-weight: 700; margin: 0; color: #ffffff; }
+          .body { padding: 24px; }
+          .row { padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+          .row:last-child { border-bottom: none; }
+          .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #64748b; margin-bottom: 4px; }
+          .value { font-size: 14px; font-weight: 600; color: #0b1530; }
+          .free-pill { display: inline-block; background: #d1fae5; color: #059669; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+          .paid-pill { display: inline-block; background: #fee2e2; color: #dc2626; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+          .footer { background: #f8fafc; padding: 16px 24px; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
         </style>
       </head>
       <body>
         <div class="card">
           <div class="header">
-            <p>Spot The Event · Suggestion Queue</p>
-            <h1>${escapeHtml(data.name)}</h1>
+            <div class="badge">New Suggestion Received</div>
+            <h1 class="title">${escapeHtml(cleanName)}</h1>
           </div>
-          <div class="content">
+          <div class="body">
             <div class="row">
-              <div class="label">Status</div>
+              <div class="label">Pricing Status</div>
               <div class="value">
                 ${
-                  isFree
-                    ? '<span class="badge-free">FREE EVENT</span>'
-                    : `<span class="badge-paid">PAID EVENT · ${escapeHtml(data.price || "Fee required")}</span>`
+                  data.is_free
+                    ? '<span class="free-pill">FREE EVENT</span>'
+                    : `<span class="paid-pill">PAID · ${escapeHtml(data.price || "Check Link")}</span>`
                 }
               </div>
             </div>
-            ${
-              !isFree && data.price
-                ? `<div class="row"><div class="label">Price</div><div class="value"><strong>${escapeHtml(data.price)}</strong></div></div>`
-                : ""
-            }
             <div class="row">
               <div class="label">Official URL</div>
-              <div class="value"><a href="${escapeHtml(data.url || "#")}" style="color: #17795a; text-decoration: underline;">${escapeHtml(data.url || "N/A")}</a></div>
+              <div class="value">${urlBlockHtml}</div>
             </div>
             <div class="row">
-              <div class="label">Date / Timeline</div>
-              <div class="value">${escapeHtml(data.date_text || "TBD")}</div>
+              <div class="label">Dates / Schedule</div>
+              <div class="value">${escapeHtml(data.date_text || "Not specified")}</div>
             </div>
             <div class="row">
               <div class="label">Organizer</div>
-              <div class="value">${escapeHtml(data.organizer || "Community suggestion")}</div>
+              <div class="value">${escapeHtml(data.organizer)}</div>
             </div>
             ${
               data.college
-                ? `<div class="row"><div class="label">College</div><div class="value">${escapeHtml(data.college)}</div></div>`
+                ? `
+            <div class="row">
+              <div class="label">College / Community</div>
+              <div class="value">${escapeHtml(data.college)}</div>
+            </div>`
                 : ""
             }
             ${
               data.contact
-                ? `<div class="row"><div class="label">Contact</div><div class="value">${escapeHtml(data.contact)}</div></div>`
+                ? `
+            <div class="row">
+              <div class="label">Submitter Contact</div>
+              <div class="value">${escapeHtml(data.contact)}</div>
+            </div>`
                 : ""
             }
           </div>
           <div class="footer">
-            Submitted via Spot The Event suggestion form · Recipient: ${recipient}
+            Submitted via <strong>Spot the Event</strong> by Venlix. Review and approve in your Admin Console.
           </div>
         </div>
       </body>
     </html>
+  `;
+
+  const textBody = `
+New Event Suggestion for Spot the Event:
+
+Event Name: ${cleanName}
+Pricing: ${priceLabel}
+URL: ${safeHref || "Invalid URL"}
+Date: ${data.date_text || "Not specified"}
+Organizer: ${data.organizer}
+College: ${data.college || "N/A"}
+Contact: ${data.contact || "N/A"}
+
+Review it in your Admin Console!
   `.trim();
 
-  // If no Resend API key configured, use graceful console fallback logging
-  if (!apiKey) {
-    console.log(
-      `[Email Service Fallback] No RESEND_API_KEY configured. Logging email notification for ${recipient}:`
-    );
-    console.log(textBody);
+  if (!apiKey || apiKey === "re_your_api_key_here") {
+    if (process.env.NODE_ENV !== "production") {
+      console.info("[Suggestion Notification Fallback]", {
+        subject,
+        event: cleanName,
+      });
+    }
     return {
-      success: true,
       delivered: false,
-      reason: "RESEND_API_KEY not configured. Event details logged to console fallback.",
+      reason: "email_not_configured",
     };
   }
 
-  // Send via Resend API
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -143,7 +158,7 @@ export async function sendSuggestionNotification(
       },
       body: JSON.stringify({
         from: fromEmail,
-        to: [recipient],
+        to: [toEmail],
         subject,
         html: htmlBody,
         text: textBody,
@@ -151,41 +166,22 @@ export async function sendSuggestionNotification(
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      console.error(`[Email Service] Resend API error (${res.status}): ${errText}`);
-      console.log(`[Email Service Fallback Log] Notification for ${recipient}:\n${textBody}`);
-      return {
-        success: true,
-        delivered: false,
-        error: errText,
-        reason: "Resend API error; logged to console fallback.",
-      };
+      console.error("[Email] Resend API rejected request with status:", res.status);
+      return { delivered: false, reason: "delivery_failed" };
     }
 
-    const json = (await res.json()) as { id?: string };
-    console.log(`[Email Service] Notification sent successfully to ${recipient} (id: ${json.id})`);
-    return {
-      success: true,
-      delivered: true,
-      id: json.id,
-    };
-  } catch (err) {
-    console.error("[Email Service] Exception sending email via Resend:", err);
-    console.log(`[Email Service Fallback Log] Notification for ${recipient}:\n${textBody}`);
-    return {
-      success: true,
-      delivered: false,
-      error: String(err),
-      reason: "Network error; logged to console fallback.",
-    };
+    return { delivered: true };
+  } catch {
+    console.error("[Email] Network failure dispatching suggestion notification.");
+    return { delivered: false, reason: "network_error" };
   }
 }
 
 function escapeHtml(str: string): string {
-  return str
+  return String(str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/'/g, "&#39;");
 }

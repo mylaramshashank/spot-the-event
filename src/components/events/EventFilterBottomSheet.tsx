@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { FilterOptions, EventType, EventMode } from "@/types";
+import { FilterOptions, EventType } from "@/types";
 
 interface EventFilterBottomSheetProps {
   isOpen: boolean;

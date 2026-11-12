@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { EventItem, SuggestionItem, EventType, EventMode, EventStatus } from "@/types";
 import {
   getEvents,
@@ -28,7 +29,11 @@ function formatForDatetimeInput(isoString: string): string {
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [authConfigured, setAuthConfigured] = useState(true);
   const [loginError, setLoginError] = useState("");
+  const [formError, setFormError] = useState("");
 
   const [activeTab, setActiveTab] = useState<"events" | "new_event" | "suggestions" | "digest" | "analytics">("events");
 
@@ -77,10 +82,14 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    // Check if existing secure session cookie exists
+    // Verify active authenticated session cookie on the server
     fetch("/api/admin/auth")
-      .then((res) => {
-        if (res.ok) {
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (typeof data?.configured === "boolean") {
+          setAuthConfigured(data.configured);
+        }
+        if (res.ok && data?.authenticated === true) {
           setIsAuthenticated(true);
         }
       })
@@ -96,21 +105,26 @@ export default function AdminPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoggingIn) return;
     setLoginError("");
+    setIsLoggingIn(true);
     try {
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: passwordInput }),
       });
-      if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.authenticated === true) {
         setIsAuthenticated(true);
         setPasswordInput("");
       } else {
-        setLoginError("Invalid admin access key. Please check your credentials.");
+        setLoginError(data?.error || "Invalid admin access key. Please check your credentials.");
       }
     } catch {
       setLoginError("Connection error while authenticating.");
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -136,15 +150,73 @@ export default function AdminPage() {
 
   const handleSaveEvent = (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError("");
+
+    const startDate = new Date(form.start_at);
+    const endDate = new Date(form.end_at);
+    const deadlineDate = new Date(form.deadline_at);
+
+    if (
+      Number.isNaN(startDate.getTime()) ||
+      Number.isNaN(endDate.getTime()) ||
+      Number.isNaN(deadlineDate.getTime())
+    ) {
+      setFormError("Please enter valid start, end, and deadline dates.");
+      return;
+    }
+
+    if (endDate.getTime() < startDate.getTime()) {
+      setFormError("End date & time must be after the start date & time.");
+      return;
+    }
+
+    const safeRegisterUrl = sanitizeExternalUrl(form.register_url.trim());
+    if (!safeRegisterUrl.startsWith("http://") && !safeRegisterUrl.startsWith("https://")) {
+      setFormError("Registration URL must be a valid https:// or http:// link.");
+      return;
+    }
+
+    const rawMapUrl = form.venue_map_url.trim();
+    const safeMapUrl = rawMapUrl ? sanitizeExternalUrl(rawMapUrl) : "";
+    if (rawMapUrl && !safeMapUrl.startsWith("http://") && !safeMapUrl.startsWith("https://")) {
+      setFormError("Venue Map URL must be a valid https:// or http:// link.");
+      return;
+    }
+
+    const rawReelUrl = form.reel_url.trim();
+    const safeReelUrl = rawReelUrl ? sanitizeExternalUrl(rawReelUrl) : "";
+    if (rawReelUrl && !safeReelUrl.startsWith("http://") && !safeReelUrl.startsWith("https://")) {
+      setFormError("Instagram Reel URL must be a valid https:// or http:// link.");
+      return;
+    }
+
+    const cleanSlug = (form.slug.trim() || form.title.trim())
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    if (!cleanSlug) {
+      setFormError("Please provide a valid URL slug or title.");
+      return;
+    }
+
+    const cleanReelCode = form.reel_code.trim();
+    if (cleanReelCode && !/^[a-zA-Z0-9_-]{1,32}$/.test(cleanReelCode)) {
+      setFormError("Reel code may only contain letters, numbers, hyphens, and underscores.");
+      return;
+    }
+
     const eventItem: EventItem = {
       id: editingEventId || `evt-${Date.now()}`,
-      slug: form.slug.trim(),
+      slug: cleanSlug,
       title: form.title.trim(),
       type: form.type,
-      start_at: new Date(form.start_at).toISOString(),
-      end_at: new Date(form.end_at).toISOString(),
+      start_at: startDate.toISOString(),
+      end_at: endDate.toISOString(),
       venue_name: form.venue_name.trim(),
-      venue_map_url: form.venue_map_url.trim(),
+      venue_map_url: safeMapUrl || undefined,
       city: form.city.trim() || "Hyderabad",
       mode: form.mode,
       fee_text: form.fee_text.trim(),
@@ -153,10 +225,10 @@ export default function AdminPage() {
       team_size: form.team_size.trim(),
       prize: form.prize.trim() || undefined,
       organizer: form.organizer.trim(),
-      register_url: form.register_url.trim(),
-      deadline_at: new Date(form.deadline_at).toISOString(),
-      reel_url: form.reel_url.trim() || undefined,
-      reel_code: form.reel_code.trim() || undefined,
+      register_url: safeRegisterUrl,
+      deadline_at: deadlineDate.toISOString(),
+      reel_url: safeReelUrl || undefined,
+      reel_code: cleanReelCode || undefined,
       description: form.description.trim(),
       featured_note: form.featured_note.trim(),
       verified: form.verified,
@@ -304,6 +376,11 @@ export default function AdminPage() {
           </p>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            {!authConfigured && (
+              <div className="p-3 bg-navy-900/5 border border-navy-900/20 text-navy-900 text-xs font-sans font-medium rounded-sm">
+                Server admin authentication is not yet configured. Set <code className="font-mono">ADMIN_PASSWORD</code> and <code className="font-mono">ADMIN_SESSION_SECRET</code> in your deployment environment variables.
+              </div>
+            )}
             {loginError && (
               <div className="p-3 bg-rust/10 border border-rust/30 text-rust text-xs font-sans font-medium rounded-sm">
                 {loginError}
@@ -313,20 +390,33 @@ export default function AdminPage() {
               <label className="block text-xs font-sans font-semibold uppercase tracking-eyebrow text-navy-900 mb-1.5">
                 Admin Password
               </label>
-              <input
-                type="password"
-                required
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Enter password (e.g. venlix)"
-                className="w-full h-11 px-4 bg-offwhite border border-rule text-navy-900 text-sm font-sans rounded-sm focus:outline-none focus:ring-2 focus:ring-emerald"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  autoComplete="current-password"
+                  maxLength={256}
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="Enter admin password"
+                  className="w-full h-11 pl-4 pr-11 bg-offwhite border border-rule text-navy-900 text-sm font-sans rounded-sm focus:outline-none focus:ring-2 focus:ring-emerald"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-slate hover:text-navy-900 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
             <button
               type="submit"
-              className="w-full h-11 bg-navy-900 text-offwhite text-sm font-sans font-semibold rounded-sm hover:bg-navy-700 active:scale-95 transition-all"
+              disabled={isLoggingIn || !authConfigured}
+              className="w-full h-11 bg-navy-900 text-offwhite text-sm font-sans font-semibold rounded-sm hover:bg-navy-700 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Sign In to Console
+              {isLoggingIn ? "Signing In..." : "Sign In to Console"}
             </button>
           </form>
         </div>
@@ -504,6 +594,12 @@ export default function AdminPage() {
               </button>
             )}
           </div>
+
+          {formError && (
+            <div className="mb-4 p-3 bg-rust/10 border border-rust/30 text-rust text-xs font-sans font-medium rounded-sm">
+              {formError}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">

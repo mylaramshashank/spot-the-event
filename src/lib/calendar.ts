@@ -1,52 +1,92 @@
 import { EventItem } from "@/types";
+import { sanitizeExternalUrl } from "./utils";
 
-export function getGoogleCalendarUrl(event: EventItem): string {
-  const start = new Date(event.start_at).toISOString().replace(/-|:|\.\d\d\d/g, "");
-  const end = new Date(event.end_at).toISOString().replace(/-|:|\.\d\d\d/g, "");
-
-  const title = encodeURIComponent(event.title);
-  const details = encodeURIComponent(
-    `${event.description}\n\nVenue: ${event.venue_name}\nRegister at: ${event.register_url}\nFeatured on Spot the Event by Venlix`
-  );
-  const location = encodeURIComponent(`${event.venue_name}, ${event.city}`);
-
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}`;
+function formatIcsDate(dateInput: string): string {
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) {
+    return new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  }
+  return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 }
 
-export function downloadIcsFile(event: EventItem): void {
-  const formatIcsDate = (dateString: string) => {
-    return new Date(dateString)
-      .toISOString()
-      .replace(/-|:|\.\d\d\d/g, "");
-  };
+function escapeIcsText(val: string): string {
+  return String(val || "")
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\r\n|\r|\n/g, "\\n")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
+}
 
-  const icsData = [
+function sanitizeUidPart(val: string): string {
+  return String(val || "event").replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 64);
+}
+
+export function getGoogleCalendarUrl(event: EventItem): string {
+  const start = formatIcsDate(event.start_at);
+  const end = formatIcsDate(event.end_at);
+
+  const safeRegister = sanitizeExternalUrl(event.register_url);
+  const detailsText = safeRegister !== "#"
+    ? `${event.description}\n\nRegister at: ${safeRegister}`
+    : event.description;
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.title,
+    dates: `${start}/${end}`,
+    details: detailsText,
+    location: `${event.venue_name}, ${event.city}`,
+  });
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+export function buildIcsContent(event: EventItem): string {
+  const start = formatIcsDate(event.start_at);
+  const end = formatIcsDate(event.end_at);
+  const now = formatIcsDate(new Date().toISOString());
+  const safeRegister = sanitizeExternalUrl(event.register_url);
+  const safeEventPage = `https://spot.venlix.tech/events/${encodeURIComponent(event.slug)}`;
+
+  const summary = escapeIcsText(event.title);
+  const description = escapeIcsText(
+    safeRegister !== "#"
+      ? `${event.description}\n\nRegister: ${safeRegister}`
+      : event.description
+  );
+  const location = escapeIcsText(`${event.venue_name}, ${event.city}`);
+  const uid = `${sanitizeUidPart(event.id)}@spot.venlix.tech`;
+
+  return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Venlix//Spot the Event//EN",
+    "PRODID:-//Venlix//SpotTheEvent//EN",
     "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${event.id}@spot.venlix.tech`,
-    `DTSTAMP:${formatIcsDate(new Date().toISOString())}`,
-    `DTSTART:${formatIcsDate(event.start_at)}`,
-    `DTEND:${formatIcsDate(event.end_at)}`,
-    `SUMMARY:${event.title.replace(/,/g, "\\,")}`,
-    `DESCRIPTION:${event.description.replace(/\n/g, "\\n").replace(/,/g, "\\,")}`,
-    `LOCATION:${event.venue_name.replace(/,/g, "\\,")}, ${event.city}`,
-    `URL:${event.register_url}`,
-    "STATUS:CONFIRMED",
+    `UID:${uid}`,
+    `DTSTAMP:${now}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${description}`,
+    `LOCATION:${location}`,
+    `URL:${safeEventPage}`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
+}
 
+export function downloadIcsFile(event: EventItem): void {
+  const icsData = buildIcsContent(event);
+  const safeSlug = sanitizeUidPart(event.slug) || "event";
   const blob = new Blob([icsData], { type: "text/calendar;charset=utf-8" });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", `${event.slug}.ics`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${safeSlug}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
