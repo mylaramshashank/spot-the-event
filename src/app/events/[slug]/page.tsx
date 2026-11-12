@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { EventItem } from "@/types";
-import { getEvents, isEventSaved, toggleSaveEventId, trackClick } from "@/lib/storage";
+import { isEventSaved, toggleSaveEventId, trackClick } from "@/lib/storage";
+import { useLiveEvents } from "@/lib/useLiveEvents";
 import { formatDate, formatTime, getEventStatus, getDeadlineLabel, sanitizeExternalUrl } from "@/lib/utils";
 import { StatusBadge, TypeBadge } from "@/components/common/StatusBadge";
 import { TypographicPoster } from "@/components/common/TypographicPoster";
@@ -16,22 +16,19 @@ export default function EventDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const [event, setEvent] = useState<EventItem | null | undefined>(undefined);
-  const [allEvents, setAllEvents] = useState<EventItem[]>([]);
+  const { events: allEvents, synced } = useLiveEvents();
   const [saved, setSaved] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
 
-  useEffect(() => {
-    const list = getEvents();
-    setAllEvents(list);
-    const found = list.find((e) => e.slug === slug);
-    setEvent(found || null);
-    if (found) {
-      setSaved(isEventSaved(found.id));
-    }
-  }, [slug]);
+  const event = useMemo(() => allEvents.find((e) => e.slug === slug), [allEvents, slug]);
 
-  if (event === undefined) {
+  useEffect(() => {
+    if (event) {
+      setSaved(isEventSaved(event.id));
+    }
+  }, [event]);
+
+  if (!event && !synced) {
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <p className="text-sm font-sans text-slate">Loading event details...</p>
@@ -39,7 +36,7 @@ export default function EventDetailPage() {
     );
   }
 
-  if (event === null) {
+  if (!event) {
     return notFound();
   }
 

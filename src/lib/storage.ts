@@ -97,6 +97,22 @@ export function getEventBySlug(slug: string): EventItem | undefined {
   return getEvents().find((e) => e.slug === slug);
 }
 
+export async function fetchPublishedEvents(): Promise<EventItem[]> {
+  if (typeof window === "undefined") return SEED_EVENTS;
+  try {
+    const res = await fetch("/api/events", { cache: "no-store" });
+    if (!res.ok) return getEvents();
+    const data = await res.json().catch(() => null);
+    if (!data || !Array.isArray(data.events)) return getEvents();
+    const valid = data.events.filter(isValidEventItem).map(sanitizeEventUrls);
+    localStorage.setItem(EVENTS_KEY, JSON.stringify(valid));
+    localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
+    return valid;
+  } catch {
+    return getEvents();
+  }
+}
+
 export function getEventByReelCode(code: string): EventItem | undefined {
   if (typeof code !== "string") return undefined;
   const clean = code.trim();
@@ -230,6 +246,21 @@ export function trackClick(kind: ClickKind, eventId?: string, source = "web"): v
     localStorage.setItem(CLICKS_KEY, JSON.stringify(next));
   } catch {
     // Ignore quota errors
+  }
+
+  try {
+    fetch("/api/clicks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        kind,
+        event_id: eventId,
+        source: String(source).slice(0, 80),
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    // Non-blocking analytics failure
   }
 }
 

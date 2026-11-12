@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getEventByReelCode } from "@/lib/storage";
+import { fetchPublishedEvents } from "@/lib/storage";
 
 export default function ReelCodeRedirectPage() {
   const params = useParams();
@@ -15,14 +15,29 @@ export default function ReelCodeRedirectPage() {
       return;
     }
 
-    const event = getEventByReelCode(code);
-    if (event && event.slug) {
-      const safeSlug = encodeURIComponent(event.slug.replace(/[^a-zA-Z0-9-_]/g, ""));
-      router.replace(`/events/${safeSlug}`);
-    } else {
-      const safeQuery = encodeURIComponent(code.trim().slice(0, 50));
-      router.replace(`/events?q=${safeQuery}`);
+    const clean = code.trim();
+    if (!/^[a-zA-Z0-9_-]{1,32}$/.test(clean)) {
+      router.replace("/events");
+      return;
     }
+
+    let cancelled = false;
+    fetchPublishedEvents().then((events) => {
+      if (cancelled) return;
+      const event = events.find(
+        (e) => e.reel_code === clean || e.reel_code === clean.padStart(2, "0")
+      );
+      if (event?.slug) {
+        const safeSlug = encodeURIComponent(event.slug.replace(/[^a-zA-Z0-9-_]/g, ""));
+        router.replace(`/events/${safeSlug}`);
+      } else {
+        router.replace(`/events?q=${encodeURIComponent(clean.slice(0, 50))}`);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [code, router]);
 
   return (

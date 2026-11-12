@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { EventItem } from "@/types";
-import { getEvents, trackClick } from "@/lib/storage";
+import { trackClick } from "@/lib/storage";
+import { useLiveEvents } from "@/lib/useLiveEvents";
 import { EventCardRow } from "@/components/events/EventCardRow";
 import { TypographicPoster } from "@/components/common/TypographicPoster";
 import { formatShortDate, getEventStatus, sanitizeExternalUrl } from "@/lib/utils";
@@ -51,12 +51,8 @@ function CountdownDisplay({ targetDate }: { targetDate: string }) {
 }
 
 export default function HackathonsPage() {
-  const [hackathons, setHackathons] = useState<EventItem[]>([]);
-
-  useEffect(() => {
-    const list = getEvents().filter((e) => e.type === "hackathon" && e.status === "published");
-    setHackathons(list);
-  }, []);
+  const { events } = useLiveEvents();
+  const hackathons = events.filter((e) => e.type === "hackathon" && e.status === "published");
 
   const nextHackathon = hackathons[0];
   const isNextEnded = nextHackathon ? getEventStatus(nextHackathon) === "ended" : false;

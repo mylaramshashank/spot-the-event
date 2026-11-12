@@ -9,18 +9,36 @@ export function SuggestSection() {
   const [honeypot, setHoneypot] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Silent drop if bot filled honeypot
     if (honeypot) {
       setSubmitted(true);
       return;
     }
-    if (!eventName.trim()) return;
+    const cleanName = eventName.trim().slice(0, 120);
+    if (cleanName.length < 2) return;
+
+    try {
+      await fetch("/api/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: cleanName,
+          is_free: true,
+          url: "https://spot-the-event.vercel.app/suggest",
+          date_text: "TBD",
+          organizer: "Community suggestion",
+          website_hp: honeypot,
+        }),
+      });
+    } catch {
+      // Fall back to local backup
+    }
 
     submitSuggestion({
-      name: eventName.trim().slice(0, 120),
-      url: "Quick inline submission",
+      name: cleanName,
+      url: "https://spot-the-event.vercel.app/suggest",
       date_text: "TBD",
       organizer: "Community suggestion",
     });

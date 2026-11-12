@@ -96,3 +96,8 @@ drop policy if exists "Admins can view analytics" on public.click_events;
 create policy "Admins can view analytics"
 on public.click_events for select
 using (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
+
+-- 5. Storage Bucket for Event Posters (Public Read)
+insert into storage.buckets (id, name, public)
+values ('posters', 'posters', true)
+on conflict (id) do nothing;

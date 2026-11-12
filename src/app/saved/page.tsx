@@ -1,27 +1,32 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { EventItem } from "@/types";
-import { getEvents, getSavedEventIds } from "@/lib/storage";
+import { getSavedEventIds } from "@/lib/storage";
+import { useLiveEvents } from "@/lib/useLiveEvents";
 import { EventCardRow } from "@/components/events/EventCardRow";
 
 export default function SavedPage() {
-  const [savedEvents, setSavedEvents] = useState<EventItem[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const { events: allEvents, synced } = useLiveEvents();
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [idsLoaded, setIdsLoaded] = useState(false);
 
   useEffect(() => {
-    const refresh = () => {
-      const all = getEvents();
-      const ids = getSavedEventIds();
-      setSavedEvents(all.filter((e) => ids.includes(e.id)));
-      setLoaded(true);
+    const refreshIds = () => {
+      setSavedIds(getSavedEventIds());
+      setIdsLoaded(true);
     };
 
-    refresh();
-    window.addEventListener("venlix_saved_updated", refresh);
-    return () => window.removeEventListener("venlix_saved_updated", refresh);
+    refreshIds();
+    window.addEventListener("venlix_saved_updated", refreshIds);
+    return () => window.removeEventListener("venlix_saved_updated", refreshIds);
   }, []);
+
+  const savedEvents = useMemo(
+    () => allEvents.filter((e) => savedIds.includes(e.id)),
+    [allEvents, savedIds]
+  );
+  const loaded = idsLoaded && (synced || allEvents.length > 0);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">

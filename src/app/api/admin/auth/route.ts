@@ -1,8 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
+import { NextRequest } from "next/server";
+import {
+  ADMIN_COOKIE_NAME,
+  SESSION_TTL_SECONDS,
+  getAuthConfig,
+  timingSafeEqualStr,
+  createSessionToken,
+  isAdminRequestAuthenticated,
+  jsonNoStore,
+} from "@/lib/admin-auth";
 
-const ADMIN_COOKIE_NAME = "venlix_admin_session";
-const SESSION_TTL_SECONDS = 60 * 60 * 24; // 24 hours
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const MAX_FAILED_ATTEMPTS = 5;
 const MAX_TRACKED_IPS = 2000;
@@ -13,16 +19,6 @@ interface RateLimitEntry {
 }
 
 const failedAttemptsByIp = new Map<string, RateLimitEntry>();
-
-function getAuthConfig(): { password: string; secret: string } | null {
-  const password = process.env.ADMIN_PASSWORD?.trim();
-  const secret = process.env.ADMIN_SESSION_SECRET?.trim();
-
-  if (!password || password.length < 8) return null;
-  if (!secret || secret.length < 16) return null;
-
-  return { password, secret };
-}
 
 function getClientIp(req: NextRequest): string {
   const forwarded = req.headers.get("x-forwarded-for");
@@ -69,61 +65,8 @@ function recordFailedAttempt(ip: string, now: number): void {
   }
 }
 
-function timingSafeEqualStr(a: string, b: string): boolean {
-  const digestA = crypto.createHash("sha256").update(a, "utf8").digest();
-  const digestB = crypto.createHash("sha256").update(b, "utf8").digest();
-  return crypto.timingSafeEqual(digestA, digestB);
-}
-
-function createSessionToken(password: string, secret: string): string {
-  const issuedAt = Math.floor(Date.now() / 1000).toString(36);
-  const nonce = crypto.randomBytes(16).toString("hex");
-  const pwHash = crypto.createHash("sha256").update(password, "utf8").digest("hex");
-  const payload = `${issuedAt}.${nonce}.${pwHash}`;
-  const sig = crypto.createHmac("sha256", secret).update(payload).digest("hex");
-  return `${issuedAt}.${nonce}.${sig}`;
-}
-
-function verifySessionToken(token: string, password: string, secret: string): boolean {
-  if (typeof token !== "string" || token.length > 256) return false;
-  const parts = token.split(".");
-  if (parts.length !== 3) return false;
-
-  const [issuedAtStr, nonce, providedSig] = parts;
-  if (!issuedAtStr || !nonce || !providedSig) return false;
-
-  const issuedAt = parseInt(issuedAtStr, 36);
-  const nowSec = Math.floor(Date.now() / 1000);
-  if (!Number.isFinite(issuedAt) || issuedAt > nowSec + 60 || nowSec - issuedAt > SESSION_TTL_SECONDS) {
-    return false;
-  }
-
-  const pwHash = crypto.createHash("sha256").update(password, "utf8").digest("hex");
-  const payload = `${issuedAtStr}.${nonce}.${pwHash}`;
-  const expectedSig = crypto.createHmac("sha256", secret).update(payload).digest("hex");
-
-  return timingSafeEqualStr(providedSig, expectedSig);
-}
-
-function jsonNoStore(data: unknown, init?: ResponseInit): NextResponse {
-  const res = NextResponse.json(data, init);
-  res.headers.set("Cache-Control", "no-store, max-age=0");
-  return res;
-}
-
 export async function GET(req: NextRequest) {
-  const config = getAuthConfig();
-  if (!config) {
-    return jsonNoStore({ authenticated: false, configured: false });
-  }
-
-  const cookie = req.cookies.get(ADMIN_COOKIE_NAME);
-  if (!cookie?.value) {
-    return jsonNoStore({ authenticated: false, configured: true });
-  }
-
-  const valid = verifySessionToken(cookie.value, config.password, config.secret);
-  return jsonNoStore({ authenticated: valid, configured: true });
+  return jsonNoStore(isAdminRequestAuthenticated(req));
 }
 
 export async function POST(req: NextRequest) {

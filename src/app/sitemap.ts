@@ -1,7 +1,9 @@
 import { MetadataRoute } from "next";
-import { SEED_EVENTS } from "@/lib/data/seed-events";
+import { fetchPublishedEventsServer } from "@/lib/supabase/server";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://spot-the-event.vercel.app";
 
   const staticPages = [
@@ -19,7 +21,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === "" ? 1.0 : 0.8,
   }));
 
-  const eventPages = SEED_EVENTS.map((event) => ({
+  const events = await fetchPublishedEventsServer();
+  const eventPages = events.map((event) => ({
     url: `${baseUrl}/events/${event.slug}`,
     lastModified: event.updated_at,
     changeFrequency: "weekly" as const,

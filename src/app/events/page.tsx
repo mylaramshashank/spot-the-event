@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, Suspense } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { FilterOptions, EventItem, EventType } from "@/types";
-import { getEvents, trackClick } from "@/lib/storage";
+import { FilterOptions, EventType } from "@/types";
+import { trackClick } from "@/lib/storage";
+import { useLiveEvents } from "@/lib/useLiveEvents";
 import { EventCardRow } from "@/components/events/EventCardRow";
 import { EventFilterBottomSheet } from "@/components/events/EventFilterBottomSheet";
 import { groupEventsByWeek, getEventStatus } from "@/lib/utils";
@@ -12,7 +13,7 @@ function EventsPageContent() {
   const searchParams = useSearchParams();
   const initialType = (searchParams?.get("type") as EventType) || "all";
 
-  const [allEvents, setAllEvents] = useState<EventItem[]>([]);
+  const { events: allEvents } = useLiveEvents();
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
     type: initialType,
@@ -23,10 +24,6 @@ function EventsPageContent() {
     searchQuery: searchParams?.get("q") || "",
     sortBy: "soonest",
   });
-
-  useEffect(() => {
-    setAllEvents(getEvents());
-  }, []);
 
   // Filter and sort events
   const filteredEvents = useMemo(() => {

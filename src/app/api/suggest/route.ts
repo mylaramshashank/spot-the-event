@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendSuggestionNotification } from "@/lib/email";
+import { getSupabaseAdminClient, getSupabasePublicClient } from "@/lib/supabase/server";
 
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const MAX_SUBMISSIONS_PER_WINDOW = 5;
@@ -134,6 +135,27 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const client = getSupabaseAdminClient() || getSupabasePublicClient();
+  let savedToDb = false;
+  if (client) {
+    try {
+      const { error } = await client.from("suggestions").insert({
+        name,
+        is_free,
+        price: price || null,
+        url: validUrl,
+        date_text: date_text || "TBD",
+        organizer,
+        college: college || null,
+        contact: contact || null,
+        status: "pending",
+      });
+      if (!error) savedToDb = true;
+    } catch {
+      // Fall back to email notification
+    }
+  }
+
   const emailResult = await sendSuggestionNotification({
     name,
     is_free,
@@ -147,6 +169,7 @@ export async function POST(req: NextRequest) {
 
   return jsonNoStore({
     success: true,
+    savedToDb,
     delivered: emailResult.delivered,
     message: "Suggestion submitted successfully.",
   });

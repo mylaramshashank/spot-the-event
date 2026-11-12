@@ -42,6 +42,10 @@ export default function AdminPage() {
   const [analytics, setAnalytics] = useState(getClickAnalytics());
   const [digestText, setDigestText] = useState("");
   const [digestCopied, setDigestCopied] = useState(false);
+  const [dbMode, setDbMode] = useState<"checking" | "supabase" | "local">("checking");
+  const [statusNotice, setStatusNotice] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingPoster, setIsUploadingPoster] = useState(false);
 
   // Form State for Event Add / Edit
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
@@ -65,6 +69,7 @@ export default function AdminPage() {
     deadline_at: "2026-11-18T23:59",
     reel_url: "",
     reel_code: "",
+    poster_url: "",
     description: "",
     featured_note: "",
     verified: true,
@@ -73,12 +78,45 @@ export default function AdminPage() {
 
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
-  const loadData = () => {
+  const loadData = async () => {
+    try {
+      const [evRes, sugRes, anaRes] = await Promise.all([
+        fetch("/api/admin/events", { cache: "no-store" }),
+        fetch("/api/admin/suggestions", { cache: "no-store" }),
+        fetch("/api/admin/analytics", { cache: "no-store" }),
+      ]);
+
+      if (evRes.ok) {
+        const evData = await evRes.json();
+        const list: EventItem[] = Array.isArray(evData.events) ? evData.events : [];
+        setEvents(list);
+        setDigestText(generateWeeklyDigest(list));
+        setDbMode("supabase");
+
+        if (sugRes.ok) {
+          const sugData = await sugRes.json();
+          setSuggestions(Array.isArray(sugData.suggestions) ? sugData.suggestions : []);
+        }
+        if (anaRes.ok) {
+          const anaData = await anaRes.json();
+          if (anaData.analytics) setAnalytics(anaData.analytics);
+        }
+        return;
+      }
+
+      if (evRes.status === 503) {
+        setDbMode("local");
+      }
+    } catch {
+      // Fallback below
+    }
+
     const evts = getEvents();
     setEvents(evts);
     setSuggestions(getSuggestions());
     setAnalytics(getClickAnalytics());
     setDigestText(generateWeeklyDigest(evts));
+    setDbMode("local");
   };
 
   useEffect(() => {
@@ -148,9 +186,34 @@ export default function AdminPage() {
     }));
   };
 
-  const handleSaveEvent = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePosterUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     setFormError("");
+    setIsUploadingPoster(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.url) {
+        setFormError(data?.error || "Failed to upload poster image.");
+        return;
+      }
+      setForm((prev) => ({ ...prev, poster_url: data.url }));
+      setStatusNotice("Poster uploaded to Supabase Storage.");
+    } catch {
+      setFormError("Network error while uploading poster.");
+    } finally {
+      setIsUploadingPoster(false);
+    }
+  };
+
+  const handleSaveEvent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSaving) return;
+    setFormError("");
+    setStatusNotice("");
 
     const startDate = new Date(form.start_at);
     const endDate = new Date(form.end_at);
@@ -187,6 +250,13 @@ export default function AdminPage() {
     const safeReelUrl = rawReelUrl ? sanitizeExternalUrl(rawReelUrl) : "";
     if (rawReelUrl && !safeReelUrl.startsWith("http://") && !safeReelUrl.startsWith("https://")) {
       setFormError("Instagram Reel URL must be a valid https:// or http:// link.");
+      return;
+    }
+
+    const rawPosterUrl = form.poster_url.trim();
+    const safePosterUrl = rawPosterUrl ? sanitizeExternalUrl(rawPosterUrl) : "";
+    if (rawPosterUrl && safePosterUrl === "#") {
+      setFormError("Poster URL must start with / or https://.");
       return;
     }
 
@@ -229,7 +299,7 @@ export default function AdminPage() {
       deadline_at: deadlineDate.toISOString(),
       reel_url: safeReelUrl || undefined,
       reel_code: cleanReelCode || undefined,
-      poster_url: editingEventId ? events.find((x) => x.id === editingEventId)?.poster_url : undefined,
+      poster_url: safePosterUrl || (editingEventId ? events.find((x) => x.id === editingEventId)?.poster_url : undefined),
       description: form.description.trim(),
       featured_note: form.featured_note.trim(),
       verified: form.verified,
@@ -238,8 +308,37 @@ export default function AdminPage() {
       updated_at: new Date().toISOString(),
     };
 
-    saveEvent(eventItem);
-    loadData();
+    if (dbMode === "supabase") {
+      setIsSaving(true);
+      try {
+        const res = await fetch("/api/admin/events", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...eventItem,
+            id: editingEventId || undefined,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setFormError(data?.error || "Failed to save event to Supabase.");
+          setIsSaving(false);
+          return;
+        }
+        setStatusNotice("Saved live to Supabase — visible to all visitors.");
+      } catch {
+        setFormError("Network error saving to Supabase.");
+        setIsSaving(false);
+        return;
+      } finally {
+        setIsSaving(false);
+      }
+    } else {
+      saveEvent(eventItem);
+      setStatusNotice("Saved locally (browser only). Add SUPABASE_SERVICE_ROLE_KEY for global publishing.");
+    }
+
+    await loadData();
     resetForm();
     setActiveTab("events");
   };
@@ -266,6 +365,7 @@ export default function AdminPage() {
       deadline_at: "2026-11-18T23:59",
       reel_url: "",
       reel_code: "",
+      poster_url: "",
       description: "",
       featured_note: "",
       verified: true,
@@ -295,6 +395,7 @@ export default function AdminPage() {
       deadline_at: formatForDatetimeInput(evt.deadline_at),
       reel_url: evt.reel_url || "",
       reel_code: evt.reel_code || "",
+      poster_url: evt.poster_url || "",
       description: evt.description,
       featured_note: evt.featured_note,
       verified: evt.verified,
@@ -303,36 +404,68 @@ export default function AdminPage() {
     setActiveTab("new_event");
   };
 
-  const handleDuplicate = (evt: EventItem) => {
+  const handleDuplicate = async (evt: EventItem) => {
     const duplicated: EventItem = {
       ...evt,
       id: `evt-${Date.now()}`,
-      slug: `${evt.slug}-copy`,
+      slug: `${evt.slug}-copy-${Date.now().toString().slice(-4)}`,
       title: `${evt.title} (Copy)`,
       status: "draft",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    saveEvent(duplicated);
-    loadData();
+    if (dbMode === "supabase") {
+      await fetch("/api/admin/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...duplicated, id: undefined }),
+      });
+    } else {
+      saveEvent(duplicated);
+    }
+    await loadData();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Delete this event from the board?")) {
-      deleteEvent(id);
-      loadData();
+      if (dbMode === "supabase") {
+        await fetch(`/api/admin/events?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      } else {
+        deleteEvent(id);
+      }
+      await loadData();
     }
   };
 
-  const handleToggleStatus = (evt: EventItem) => {
+  const handleToggleStatus = async (evt: EventItem) => {
     const newStatus: EventStatus = evt.status === "published" ? "hidden" : "published";
-    saveEvent({ ...evt, status: newStatus });
-    loadData();
+    if (dbMode === "supabase") {
+      await fetch("/api/admin/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...evt, status: newStatus }),
+      });
+    } else {
+      saveEvent({ ...evt, status: newStatus });
+    }
+    await loadData();
   };
 
-  const handleApproveSuggestion = (sug: SuggestionItem) => {
-    updateSuggestionStatus(sug.id, "approved");
-    // Pre-populate form
+  const handleUpdateSuggestionStatus = async (id: string, status: SuggestionItem["status"]) => {
+    if (dbMode === "supabase") {
+      await fetch("/api/admin/suggestions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status }),
+      });
+    } else {
+      updateSuggestionStatus(id, status);
+    }
+    await loadData();
+  };
+
+  const handleApproveSuggestion = async (sug: SuggestionItem) => {
+    await handleUpdateSuggestionStatus(sug.id, "approved");
     setEditingEventId(null);
     setForm((prev) => ({
       ...prev,
@@ -342,7 +475,6 @@ export default function AdminPage() {
       organizer: sug.organizer || sug.college || "Organized via community",
       status: "draft",
     }));
-    loadData();
     setActiveTab("new_event");
   };
 
@@ -428,11 +560,23 @@ export default function AdminPage() {
   // Admin Dashboard
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-rule">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-rule">
         <div>
-          <span className="text-[11px] font-sans font-semibold tracking-eyebrow uppercase text-emerald block mb-1">
-            VENLIX ADMIN CONSOLE
-          </span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[11px] font-sans font-semibold tracking-eyebrow uppercase text-emerald">
+              VENLIX ADMIN CONSOLE
+            </span>
+            {dbMode === "supabase" && (
+              <span className="px-2 py-0.5 text-[10px] font-semibold uppercase rounded-full bg-emerald-100 text-emerald-600">
+                Supabase Connected · Global Live
+              </span>
+            )}
+            {dbMode === "local" && (
+              <span className="px-2 py-0.5 text-[10px] font-semibold uppercase rounded-full bg-rust/10 text-rust">
+                Local Fallback (Set SUPABASE_SERVICE_ROLE_KEY)
+              </span>
+            )}
+          </div>
           <h1 className="font-display text-3xl sm:text-4xl font-semibold text-navy-900">
             Spot the Event Control
           </h1>
@@ -459,6 +603,14 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
+      {statusNotice && (
+        <div className="mb-4 p-3 bg-emerald-100/80 border border-emerald/30 rounded-sm text-xs font-sans text-navy-900 flex items-center justify-between gap-2">
+          <span>{statusNotice}</span>
+          <button type="button" onClick={() => setStatusNotice("")} className="underline text-slate hover:text-navy-900">
+            Dismiss
+          </button>
+        </div>
+      )}
       <div className="flex gap-2 border-b border-rule pb-2 mb-6 overflow-x-auto scrollbar-none">
         <button
           type="button"
@@ -796,6 +948,36 @@ export default function AdminPage() {
 
             <div className="sm:col-span-2">
               <label className="block text-xs font-sans font-semibold uppercase tracking-eyebrow text-navy-900 mb-1">
+                Event Poster Banner (Upload or Paste URL)
+              </label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  value={form.poster_url}
+                  onChange={(e) => setForm({ ...form, poster_url: e.target.value })}
+                  placeholder="/posters/... or https://..."
+                  className="w-full sm:flex-1 h-11 px-4 bg-offwhite border border-rule text-navy-900 text-sm font-sans rounded-sm focus:ring-2 focus:ring-emerald focus:outline-none"
+                />
+                <label className="h-11 px-4 bg-paper border border-navy-900/20 text-navy-900 text-xs font-sans font-semibold rounded-sm hover:border-navy-900 flex items-center justify-center cursor-pointer shrink-0">
+                  {isUploadingPoster ? "Uploading..." : "Upload Image"}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={isUploadingPoster || dbMode !== "supabase"}
+                    onChange={handlePosterUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              {form.poster_url && (
+                <p className="mt-1 text-[11px] text-emerald-600 truncate">
+                  Active poster: {form.poster_url}
+                </p>
+              )}
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-sans font-semibold uppercase tracking-eyebrow text-navy-900 mb-1">
                 &ldquo;Why I featured this&rdquo; Note (Shashank’s Voice)
               </label>
               <input
@@ -831,9 +1013,10 @@ export default function AdminPage() {
             </button>
             <button
               type="submit"
-              className="h-11 px-6 bg-navy-900 text-offwhite rounded-sm text-xs font-sans font-semibold hover:bg-navy-700 active:scale-95 transition-all"
+              disabled={isSaving || isUploadingPoster}
+              className="h-11 px-6 bg-navy-900 text-offwhite rounded-sm text-xs font-sans font-semibold hover:bg-navy-700 active:scale-95 transition-all disabled:opacity-50"
             >
-              {editingEventId ? "Save Changes" : "Publish Event"}
+              {isSaving ? "Saving..." : editingEventId ? "Save Changes" : "Publish Event"}
             </button>
           </div>
         </form>
@@ -900,10 +1083,7 @@ export default function AdminPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        updateSuggestionStatus(sug.id, "rejected");
-                        loadData();
-                      }}
+                      onClick={() => handleUpdateSuggestionStatus(sug.id, "rejected")}
                       className="px-3 py-1.5 bg-paper border border-rule text-slate text-xs font-sans font-medium rounded-sm hover:text-navy-900"
                     >
                       Reject
