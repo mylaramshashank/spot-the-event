@@ -196,6 +196,21 @@ export default function EventDetailPage() {
             </span>
           </div>
 
+          {/* Mobile quick reel CTA */}
+          {event.reel_url && sanitizeExternalUrl(event.reel_url) !== "#" && (
+            <div className="mt-4 flex sm:hidden">
+              <a
+                href={sanitizeExternalUrl(event.reel_url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("instagram", event.id, "detail_mobile_watch_reel")}
+                className="h-10 px-4 rounded-full border border-navy-900/20 bg-paper text-navy-900 font-semibold text-xs inline-flex items-center gap-1.5 shadow-xs"
+              >
+                Watch reel &rarr;
+              </a>
+            </div>
+          )}
+
           {/* Desktop Primary Actions */}
           <div className="mt-6 hidden sm:flex items-center gap-3 pt-6 border-t border-rule">
             <a

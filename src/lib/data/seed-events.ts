@@ -20,7 +20,7 @@ export const SEED_EVENTS: EventItem[] = [
     organizer: 'Google DeepMind × Google Cloud',
     register_url: 'https://startupbuildathon.com/',
     deadline_at: '2026-11-13T23:59:00+05:30',
-    reel_url: '',
+    reel_url: 'https://www.instagram.com/reel/DfpLTSDBN1R/?exln=c3NmdmF2NXJoNzY3',
     reel_code: '03',
     poster_url: '/posters/startup-buildathon-india-2026.jpg',
     description: `A nationwide opportunity hosted by Google DeepMind × Google Cloud for aspiring entrepreneurs, founders, and early-stage startups to build an AI-powered product with Google AI, Google Cloud, expert mentors, and industry guidance.

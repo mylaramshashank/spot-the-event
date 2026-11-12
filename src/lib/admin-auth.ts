@@ -52,7 +52,10 @@ export function verifySessionToken(token: string, password: string, secret: stri
 
 export function jsonNoStore(data: unknown, init?: ResponseInit): NextResponse {
   const res = NextResponse.json(data, init);
-  res.headers.set("Cache-Control", "no-store, max-age=0");
+  res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  res.headers.set("CDN-Cache-Control", "no-store");
+  res.headers.set("Vercel-CDN-Cache-Control", "no-store");
+  res.headers.set("Pragma", "no-cache");
   return res;
 }
 

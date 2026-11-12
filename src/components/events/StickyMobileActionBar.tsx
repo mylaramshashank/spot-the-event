@@ -32,12 +32,15 @@ export function StickyMobileActionBar({ event }: StickyMobileActionBarProps) {
     trackClick("register", event.id, "sticky_mobile_bottom_bar");
   };
 
+  const safeReelUrl = event.reel_url ? sanitizeExternalUrl(event.reel_url) : "#";
+  const hasReel = safeReelUrl !== "#";
+
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-40 bg-offwhite/95 backdrop-blur-none border-t border-rule sm:hidden px-4 py-2.5 transition-transform"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 8px) + 8px)" }}
     >
-      <div className="flex items-center gap-3 max-w-md mx-auto">
+      <div className="flex items-center gap-2.5 max-w-md mx-auto">
         <button
           type="button"
           onClick={handleToggle}
@@ -61,6 +64,21 @@ export function StickyMobileActionBar({ event }: StickyMobileActionBarProps) {
             <path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
           </svg>
         </button>
+
+        {hasReel && (
+          <a
+            href={safeReelUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackClick("instagram", event.id, "sticky_mobile_watch_reel")}
+            className="h-12 px-4 shrink-0 rounded-full border border-navy-900/20 bg-paper text-navy-900 font-semibold text-xs flex items-center gap-1.5 shadow-xs active:scale-[0.98]"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="text-emerald-600">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <span>Reel</span>
+          </a>
+        )}
 
         <a
           href={isEnded ? "#" : sanitizeExternalUrl(event.register_url)}

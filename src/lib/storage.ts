@@ -6,7 +6,7 @@ import { sanitizeExternalUrl } from "./utils";
 
 const EVENTS_KEY = "venlix_spot_events_v1";
 const SEED_VERSION_KEY = "venlix_spot_seed_version";
-const SEED_VERSION = "2026-11-12-buildathon-v5";
+const SEED_VERSION = "2026-11-12-reels-v6";
 const SAVED_KEY = "venlix_spot_saved_v1";
 const SUGGESTIONS_KEY = "venlix_spot_suggestions_v1";
 const CLICKS_KEY = "venlix_spot_clicks_v1";

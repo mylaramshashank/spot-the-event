@@ -52,7 +52,9 @@ function CountdownDisplay({ targetDate }: { targetDate: string }) {
 
 export default function HackathonsPage() {
   const { events } = useLiveEvents();
-  const hackathons = events.filter((e) => e.type === "hackathon" && e.status === "published");
+  const hackathons = events
+    .filter((e) => e.type === "hackathon" && e.status === "published")
+    .sort((a, b) => Number(getEventStatus(a) === "ended") - Number(getEventStatus(b) === "ended"));
 
   const nextHackathon = hackathons[0];
   const isNextEnded = nextHackathon ? getEventStatus(nextHackathon) === "ended" : false;

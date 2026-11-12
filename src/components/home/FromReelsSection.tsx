@@ -12,8 +12,11 @@ interface FromReelsSectionProps {
 }
 
 export function FromReelsSection({ events }: FromReelsSectionProps) {
-  // Events that have reels
-  const reelEvents = events.filter((e) => e.reel_url).slice(0, 3);
+  // Published events that have a valid Instagram reel link (most recently updated first)
+  const reelEvents = events
+    .filter((e) => e.status === "published" && e.reel_url && sanitizeExternalUrl(e.reel_url) !== "#")
+    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+    .slice(0, 12);
 
   const handleReelClick = (eventId: string) => {
     trackClick("instagram", eventId, "from_reels_section");
