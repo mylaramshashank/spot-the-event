@@ -2,29 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
+import { Linkedin, Github, Mail } from "lucide-react";
 import { VenlixLogo } from "@/components/common/VenlixLogo";
 import { trackClick } from "@/lib/storage";
 
 export default function AboutPage() {
-  const criteria = [
-    {
-      title: "Legitimate Venue & Infrastructure",
-      desc: "Every offline event must have a physical venue with proven capacity, power, and connectivity (e.g. T-Hub, IIIT-H, premier colleges, or co-working spaces). No phantom venues.",
-    },
-    {
-      title: "Zero Multi-Level Marketing or Up-selling",
-      desc: "We refuse events whose sole objective is pushing ₹40,000 bootcamp certificates or sales courses to vulnerable students.",
-    },
-    {
-      title: "Transparent Fees & Organizers",
-      desc: "We verify whether an event is genuinely free or upfront about its costs. If there is a registration fee, we clarify exactly what it pays for (food, server access, kit).",
-    },
-    {
-      title: "Real Judges and Practical Focus",
-      desc: "Hackathons and workshops must feature active practitioners, engineering leads, or startup founders who offer actionable feedback.",
-    },
-  ];
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Header */}
@@ -38,7 +20,7 @@ export default function AboutPage() {
       </div>
 
       {/* First-person narrative */}
-      <div className="bg-paper border border-rule p-6 sm:p-8 rounded-sm mb-12 space-y-4 text-base font-sans text-navy-900/90 leading-relaxed">
+      <div className="bg-paper border border-rule p-6 sm:p-8 rounded-2xl mb-12 space-y-4 text-base font-sans text-navy-900/90 leading-relaxed shadow-xs">
         <p>
           If you follow tech in Hyderabad, you already know the frustration: you watch a reel about an exciting weekend hackathon, drop a comment to get an auto-DM bot link, and either receive nothing or get spammed with twenty irrelevant marketing messages.
         </p>
@@ -50,38 +32,8 @@ export default function AboutPage() {
         </p>
       </div>
 
-      {/* Editorial Selection Criteria */}
-      <div className="mb-12">
-        <span className="text-[12px] font-sans font-semibold tracking-eyebrow uppercase text-slate block mb-1">
-          OUR EDITORIAL STANDARD
-        </span>
-        <h2 className="font-display text-2xl sm:text-3xl font-semibold text-navy-900 mb-6">
-          How we choose what makes the board
-        </h2>
-
-        <div className="space-y-4">
-          {criteria.map((item, idx) => (
-            <div key={idx} className="bg-paper border border-rule p-5 rounded-sm">
-              <div className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                  ✓
-                </span>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-navy-900 mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm font-sans text-slate leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* About Venlix */}
-      <div className="bg-navy-900 text-offwhite p-6 sm:p-8 rounded-sm mb-12 border border-navy-700">
+      <div className="bg-navy-900 text-offwhite p-6 sm:p-8 rounded-2xl mb-12 border border-navy-700 shadow-sm">
         <div className="mb-4">
           <VenlixLogo variant="footer" size={32} />
         </div>
@@ -96,7 +48,7 @@ export default function AboutPage() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackClick("venlix", undefined, "about_page_venlix_link")}
-          className="h-11 px-5 rounded-sm bg-emerald text-offwhite text-xs font-sans font-semibold inline-flex items-center hover:bg-emerald/90 transition-all"
+          className="h-11 px-5 rounded-full bg-emerald text-offwhite text-xs font-sans font-semibold inline-flex items-center hover:bg-emerald-600 transition-all shadow-xs"
         >
           Explore Venlix &rarr;
         </a>
@@ -199,20 +151,20 @@ export default function AboutPage() {
             <h4 className="font-display text-xl font-bold text-navy-900">
               Divyend
             </h4>
-            <p className="text-xs font-sans text-emerald font-semibold uppercase tracking-wider mb-2">
-              Engineering & Co-founder
+            <p className="text-xs font-sans text-slate font-semibold uppercase tracking-wider mb-2">
+              Engineering & Architecture
             </p>
             <p className="text-xs font-sans text-slate leading-relaxed mb-4">
-              Architecting Venlix’s platform systems, video pipelines, and high-performance editorial web experiences.
+              Building high-retention creator workflows, performance-first video pipelines, and the Venlix platform engine.
             </p>
-            <div className="pt-2 border-t border-rule text-xs font-medium">
+            <div className="space-y-2 pt-2 border-t border-rule text-xs font-medium text-navy-900">
               <a
                 href="https://venlix.tech"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-semibold text-navy-900 hover:text-emerald"
+                className="flex items-center gap-2 hover:text-emerald transition-colors"
               >
-                Venlix Platform &rarr;
+                <span>venlix.tech &rarr;</span>
               </a>
             </div>
           </div>
