@@ -8,7 +8,7 @@ export const SEED_EVENTS: EventItem[] = [
     type: 'meetup',
     start_at: '2026-11-26T15:00:00+05:30',
     end_at: '2026-11-26T17:00:00+05:30',
-    venue_name: 'Google Hyderabad, Block 1, DivyaSree Omega Survey No 13, Kothaguda, Hyderabad, Telangana 500084',
+    venue_name: 'Google Hyderabad Office, Block 1, DivyaSree Omega Survey No 13, Kothaguda, Hyderabad, Telangana 500084',
     venue_map_url: 'https://www.google.com/maps/search/?api=1&query=17.458413399999998%2C78.3725586&query_place_id=ChIJSRuNtd2TyzsRyeFsL3etzs8',
     city: 'Hyderabad',
     mode: 'in_person',
@@ -16,14 +16,14 @@ export const SEED_EVENTS: EventItem[] = [
     is_free: true,
     eligibility: 'SaaS founders, marketing, growth & demand gen leaders',
     team_size: 'Individual',
-    prize: 'Closed-door B2B growth playbook, fireside chat & high tea networking',
+    prize: 'Inside Google Office · High tea & networking',
     organizer: 'PipeRocket x Google',
     register_url: 'https://luma.com/8lc47mnc?tk=ElU71B',
     deadline_at: '2026-11-26T14:00:00+05:30',
     reel_url: '',
     reel_code: '02',
     poster_url: '/posters/beyond-search-to-sell-piperocket-google.jpg',
-    description: `Closed-door session hosted by PipeRocket in partnership with Google for B2B SaaS founders and marketing leaders, focused on real campaigns and pipeline results (Storylane, Xflow, LeadSquared) led by PipeRocket Co-founders Praveen and Kim.
+    description: `Closed-door session hosted inside Google Hyderabad Office by PipeRocket in partnership with Google for B2B SaaS founders and marketing leaders, focused on real campaigns and pipeline results (Storylane, Xflow, LeadSquared) led by PipeRocket Co-founders Praveen and Kim.
 
 What We Will Cover:
 • Performance Marketing — Structuring Google Ads and paid social for qualified pipeline instead of cheap leads.
@@ -38,11 +38,11 @@ Agenda (Thu, 26 Nov · 3:00 PM – 5:00 PM):
 • 5:00 PM · High tea and open networking
 
 Limited seats — approval required via Luma.`,
-    featured_note: 'Closed-door PipeRocket x Google session inside Google Hyderabad with practical B2B performance marketing, AEO/GEO, and founder networking.',
+    featured_note: 'Hosted inside Google Hyderabad Office (Kothaguda) — rare closed-door access to PipeRocket x Google founders decoding B2B performance marketing, AEO/GEO & AI growth playbooks, plus high tea networking.',
     verified: true,
     status: 'published',
     created_at: '2026-11-12T15:35:00+05:30',
-    updated_at: '2026-11-12T15:35:00+05:30',
+    updated_at: '2026-11-12T15:40:00+05:30',
   },
   {
     id: 'evt-paytm-ai-2026',

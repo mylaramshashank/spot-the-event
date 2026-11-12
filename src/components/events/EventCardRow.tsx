@@ -70,14 +70,29 @@ export function EventCardRow({ event, showSaveButton = true }: EventCardRowProps
               </Link>
             </h3>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-slate">
-              <span className="font-semibold text-navy-900">{event.venue_name.split(",")[0]}</span>
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs sm:text-sm text-slate">
+              <span className="inline-flex items-center gap-1 font-semibold text-navy-900 bg-surface border border-rule px-2.5 py-0.5 rounded-full">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  className="text-emerald-600 shrink-0"
+                  aria-hidden="true"
+                >
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                {event.venue_name.split(",")[0]}
+              </span>
               <span>·</span>
               <span>{event.fee_text}</span>
               {event.prize && (
                 <>
                   <span>·</span>
-                  <span className="text-emerald-600 font-semibold truncate max-w-[180px]">
+                  <span className="text-emerald-600 font-semibold truncate max-w-[220px]">
                     {event.prize}
                   </span>
                 </>

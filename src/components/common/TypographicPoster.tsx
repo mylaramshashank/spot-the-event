@@ -26,7 +26,7 @@ export function TypographicPoster({
   titleSize,
 }: TypographicPosterProps) {
   const [imgError, setImgError] = useState(false);
-  const [containBanner, setContainBanner] = useState(false);
+  const [bannerShape, setBannerShape] = useState<"wide" | "og" | "square">("wide");
 
   const isCompact = aspectRatio === "video" || aspectRatio === "square";
   const aspectClass =
@@ -34,11 +34,13 @@ export function TypographicPoster({
       ? "aspect-square"
       : aspectRatio === "video"
       ? "aspect-[16/9]"
-      : containBanner
+      : bannerShape === "square"
       ? "aspect-[4/3] sm:aspect-[16/9] max-h-[420px]"
+      : bannerShape === "og"
+      ? "aspect-[16/9] sm:aspect-[19/10]"
       : "aspect-[21/9] sm:aspect-[24/9]";
 
-  const useContain = isCompact || containBanner;
+  const useContain = isCompact || bannerShape !== "wide";
 
   const safePoster = posterUrl ? sanitizeExternalUrl(posterUrl) : "#";
   const hasPoster = safePoster !== "#" && !imgError;
@@ -58,8 +60,13 @@ export function TypographicPoster({
           onLoad={(e) => {
             if (aspectRatio === "banner") {
               const { naturalWidth, naturalHeight } = e.currentTarget;
-              if (naturalHeight > 0 && naturalWidth / naturalHeight < 1.8) {
-                setContainBanner(true);
+              if (naturalHeight > 0) {
+                const ratio = naturalWidth / naturalHeight;
+                if (ratio < 1.6) {
+                  setBannerShape("square");
+                } else if (ratio < 2.15) {
+                  setBannerShape("og");
+                }
               }
             }
           }}

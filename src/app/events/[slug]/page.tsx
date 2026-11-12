@@ -177,9 +177,27 @@ export default function EventDetailPage() {
             {event.title}
           </h1>
 
-          <p className="mt-2 text-sm text-slate">
-            Organized by <strong className="text-navy-900 font-bold">{event.organizer}</strong>
-          </p>
+          <div className="mt-2.5 flex flex-wrap items-center gap-2.5 text-sm text-slate">
+            <span>
+              Organized by <strong className="text-navy-900 font-bold">{event.organizer}</strong>
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-navy-900 bg-emerald-100/80 border border-emerald/30 px-3 py-1 rounded-full">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                className="text-emerald-600 shrink-0"
+                aria-hidden="true"
+              >
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>Venue: {event.venue_name.split(",")[0]}</span>
+            </span>
+          </div>
 
           {/* Desktop Primary Actions */}
           <div className="mt-6 hidden sm:flex items-center gap-3 pt-6 border-t border-rule">
