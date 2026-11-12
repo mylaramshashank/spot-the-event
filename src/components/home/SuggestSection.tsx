@@ -63,7 +63,7 @@ export function SuggestSection() {
               onChange={(e) => setEventName(e.target.value)}
               placeholder="e.g. JNTUH HackQuest 2026"
               required
-              className="flex-1 h-12 px-5 bg-paper border border-rule text-navy-900 placeholder:text-slate-500/60 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-emerald focus:border-emerald shadow-xs"
+              className="w-full sm:flex-1 h-12 min-h-[48px] px-5 bg-paper border border-rule text-navy-900 placeholder:text-slate-500/60 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-emerald focus:border-emerald shadow-xs"
             />
             <button
               type="submit"

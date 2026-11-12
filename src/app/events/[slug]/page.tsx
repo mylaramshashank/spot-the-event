@@ -278,20 +278,20 @@ export default function EventDetailPage() {
 
       {/* Key Facts in a 2-Column Definition List */}
       <div className="mb-8 bg-paper border border-rule rounded-sm p-5 sm:p-7">
-        <h2 className="font-display text-2xl font-semibold text-navy-900 mb-4 pb-2 border-b border-rule">
+        <h2 className="font-display text-2xl font-bold text-navy-900 mb-4 pb-2 border-b border-rule">
           Key Facts
         </h2>
 
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm font-sans">
           <div>
-            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">When</dt>
+            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">When</dt>
             <dd className="mt-1 font-medium text-navy-900">
               {formatDate(event.start_at)} ({formatTime(event.start_at)})
             </dd>
           </div>
 
           <div>
-            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Where</dt>
+            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Where</dt>
             <dd className="mt-1 font-medium text-navy-900">
               {event.venue_name}
               {event.venue_map_url && (
@@ -308,34 +308,34 @@ export default function EventDetailPage() {
           </div>
 
           <div>
-            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Fee</dt>
+            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Fee</dt>
             <dd className="mt-1 font-medium text-navy-900">{event.fee_text}</dd>
           </div>
 
           <div>
-            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Eligibility</dt>
+            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Eligibility</dt>
             <dd className="mt-1 font-medium text-navy-900">{event.eligibility}</dd>
           </div>
 
           <div>
-            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Team Size</dt>
+            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Team Size</dt>
             <dd className="mt-1 font-medium text-navy-900">{event.team_size}</dd>
           </div>
 
           {event.prize && (
             <div>
-              <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Prize Pool</dt>
+              <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Prize Pool</dt>
               <dd className="mt-1 font-medium text-emerald">{event.prize}</dd>
             </div>
           )}
 
           <div>
-            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Organizer</dt>
+            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Organizer</dt>
             <dd className="mt-1 font-medium text-navy-900">{event.organizer}</dd>
           </div>
 
           <div>
-            <dt className="text-xs font-semibold tracking-eyebrow uppercase text-slate">Registration Deadline</dt>
+            <dt className="text-xs font-bold tracking-eyebrow uppercase text-navy-900">Registration Deadline</dt>
             <dd className="mt-1 font-medium text-rust">
               {formatDate(event.deadline_at)} ({deadlineLabel})
             </dd>
@@ -345,7 +345,7 @@ export default function EventDetailPage() {
 
       {/* Description */}
       <div className="mb-8 bg-paper border border-rule rounded-sm p-5 sm:p-7">
-        <h2 className="font-display text-2xl font-semibold text-navy-900 mb-3 pb-2 border-b border-rule">
+        <h2 className="font-display text-2xl font-bold text-navy-900 mb-3 pb-2 border-b border-rule">
           About this event
         </h2>
         <div className="text-sm sm:text-base font-sans text-navy-900/90 leading-relaxed whitespace-pre-line">
