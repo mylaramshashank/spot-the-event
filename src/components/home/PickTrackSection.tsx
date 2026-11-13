@@ -3,14 +3,19 @@
 import React from "react";
 import Link from "next/link";
 import { EventItem } from "@/types";
+import { getEventStatus } from "@/lib/utils";
 
 interface PickTrackSectionProps {
   events: EventItem[];
 }
 
 export function PickTrackSection({ events }: PickTrackSectionProps) {
-  const hackathonsCount = events.filter((e) => e.type === "hackathon" && e.status === "published").length;
-  const meetupsCount = events.filter((e) => (e.type === "meetup" || e.type === "workshop") && e.status === "published").length;
+  const hackathonsCount = events.filter(
+    (e) => e.type === "hackathon" && e.status === "published" && getEventStatus(e) !== "ended"
+  ).length;
+  const meetupsCount = events.filter(
+    (e) => (e.type === "meetup" || e.type === "workshop") && e.status === "published" && getEventStatus(e) !== "ended"
+  ).length;
 
   return (
     <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-rule">

@@ -4,14 +4,20 @@ import React from "react";
 import Link from "next/link";
 import { EventItem } from "@/types";
 import { EventCardRow } from "../events/EventCardRow";
+import { getEventStatus } from "@/lib/utils";
 
 interface ThisWeekSectionProps {
   events: EventItem[];
 }
 
 export function ThisWeekSection({ events }: ThisWeekSectionProps) {
-  // Show first 4 events
-  const featured = events.slice(0, 4);
+  // Only display events whose registrations are currently OPEN (auto-removes closed events)
+  const openEvents = events.filter(
+    (e) => e.status === "published" && getEventStatus(e) !== "ended"
+  );
+  const featured = openEvents.slice(0, 6);
+
+  if (openEvents.length === 0) return null;
 
   return (
     <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-rule">
