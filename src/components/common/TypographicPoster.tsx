@@ -26,7 +26,7 @@ export function TypographicPoster({
   titleSize,
 }: TypographicPosterProps) {
   const [imgError, setImgError] = useState(false);
-  const [bannerShape, setBannerShape] = useState<"wide" | "og" | "square">("wide");
+  const [bannerShape, setBannerShape] = useState<"wide" | "og" | "square" | "ultrawide">("wide");
 
   const isCompact = aspectRatio === "video" || aspectRatio === "square";
   const aspectClass =
@@ -38,9 +38,12 @@ export function TypographicPoster({
       ? "aspect-[4/3] sm:aspect-[16/9] max-h-[420px]"
       : bannerShape === "og"
       ? "aspect-[16/9] sm:aspect-[19/10]"
+      : bannerShape === "ultrawide"
+      ? "aspect-[21/9] sm:aspect-[3.2/1] max-h-[360px]"
       : "aspect-[21/9] sm:aspect-[24/9]";
 
   const useContain = isCompact || bannerShape !== "wide";
+  const containerBg = bannerShape === "ultrawide" || bannerShape === "og" ? "bg-[#0B0D10]" : "bg-white";
 
   const safePoster = posterUrl ? sanitizeExternalUrl(posterUrl) : "#";
   const hasPoster = safePoster !== "#" && !imgError;
@@ -48,7 +51,7 @@ export function TypographicPoster({
   if (hasPoster) {
     return (
       <div
-        className={`relative w-full ${aspectClass} bg-white overflow-hidden border-b border-rule ${className}`}
+        className={`relative w-full ${aspectClass} ${containerBg} overflow-hidden border-b border-rule ${className}`}
       >
         <Image
           src={safePoster}
@@ -66,6 +69,10 @@ export function TypographicPoster({
                   setBannerShape("square");
                 } else if (ratio < 2.15) {
                   setBannerShape("og");
+                } else if (ratio > 2.8) {
+                  setBannerShape("ultrawide");
+                } else {
+                  setBannerShape("wide");
                 }
               }
             }

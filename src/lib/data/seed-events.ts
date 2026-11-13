@@ -2,6 +2,106 @@ import { EventItem } from '@/types';
 
 export const SEED_EVENTS: EventItem[] = [
   {
+    id: '7d6394b6-0d38-4502-8087-47ec059426ec',
+    slug: 'zenith-26-mlrit-hyderabad',
+    title: "Zenith'26 – National Hackathon & AWS Community Day",
+    type: 'hackathon',
+    start_at: '2026-12-17T09:00:00+05:30',
+    end_at: '2026-12-19T18:00:00+05:30',
+    venue_name: 'MLR Institute of Technology (MLRIT), Dundigal Police Station Road, Hyderabad, Telangana 500043',
+    venue_map_url: 'https://maps.google.com/?q=MLR+Institute+of+Technology+Dundigal+Hyderabad+500043',
+    city: 'Hyderabad',
+    mode: 'in_person',
+    fee_text: 'Free (Round 1) · ₹499 for offline finalists',
+    is_free: true,
+    eligibility: 'College students across India (UG, PG, Engineering, Management, Sciences)',
+    team_size: '3 to 4 Members',
+    prize: '₹2,50,000 Prize Pool (₹1,50,000 Cash + ₹1,00,000 AWS Credits & Builder Accounts)',
+    organizer: 'SCOPE Club MLRIT in collaboration with AWS',
+    register_url: 'https://unstop.com/hackathons/zenith26-mlr-institute-of-technology-mlrit-hyderabad-1790028',
+    deadline_at: '2026-12-04T13:30:00+05:30',
+    reel_url: '',
+    reel_code: '04',
+    poster_url: '/posters/zenith-26-mlrit-hyderabad.jpg',
+    description: `Welcome to ZENITH’26, a national-level technical event featuring AWS Student Community Day followed by a 2-Day Hackathon, organized by SCOPE Club, MLRIT, Hyderabad in collaboration with AWS Student Builder Group.
+
+Event Schedule:
+• Day 1 (17 Dec 2026): AWS Student Community Day — High-impact technical workshops & speaker sessions on AI, Generative AI, and Cloud Computing.
+• Day 2 (18 Dec 2026): Hackathon Kickoff — Team collaboration, ideation, and prototype development across 3 core AI tracks.
+• Day 3 (19 Dec 2026): Hackathon Finale — Prototype completion, jury showcase, winner announcements, and grand closing ceremony.
+
+Hackathon Domains:
+• AI for Healthcare — Diagnostics, patient care, medical assistance, and healthcare accessibility.
+• AI for Education — Intelligent learning platforms, personalized education, and accessible edtech.
+• AI for Security — AI-powered cybersecurity, surveillance, threat detection, and public safety.
+
+Added Advantage:
+• Teams integrating AWS services, tools, or architectures will receive bonus evaluation credit.
+
+Rewards & Prizes (Total ₹2,50,000 Pool):
+• ₹1,50,000 Cash Prize Pool for winners.
+• ₹1,00,000 worth of AWS Adoption Credits and Builder Accounts ($1000 value).
+• AWS Swags for all participants and official Certificates.
+
+Rounds & Fees:
+• Round 1 (Online Ideation via Unstop): Completely FREE. Submit abstract and PPT template. Rolling shortlisting starts 28 Nov.
+• Round 2 (Offline Finale at MLRIT): ₹499 per participant for shortlisted teams (includes food, refreshments, and accommodation for outstation participants).`,
+    featured_note: 'National-level 2-day hackathon & AWS Community Day at MLRIT with ₹1.5L cash prizes, ₹1L AWS credits, AWS swags, and free food & accommodation for outstation finalists.',
+    verified: true,
+    status: 'published',
+    created_at: '2026-11-13T21:30:00+05:30',
+    updated_at: '2026-11-13T21:30:00+05:30',
+  },
+  {
+    id: 'b7e394d7-daa1-4e6c-af3a-4bc0006775af',
+    slug: 'cmr-hackfest-4-hyderabad',
+    title: 'CMR HACKFEST 4.0 – 36 Hours National Level Hackathon',
+    type: 'hackathon',
+    start_at: '2027-01-08T09:00:00+05:30',
+    end_at: '2027-01-09T21:00:00+05:30',
+    venue_name: 'CMR College of Engineering & Technology (CMRCET), Kandlakoya, Medchal Road, Hyderabad, Telangana 501401',
+    venue_map_url: 'https://maps.google.com/?q=CMR+College+of+Engineering+and+Technology+Kandlakoya+Medchal+Hyderabad+501401',
+    city: 'Hyderabad',
+    mode: 'in_person',
+    fee_text: 'Free (Round 1) · ₹575 for offline finalists',
+    is_free: true,
+    eligibility: 'Undergraduate Engineering Students (All disciplines)',
+    team_size: '3 to 6 Members',
+    prize: '₹2,22,000 Cash Prize Pool (Winner ₹1,00,000 · Runner-up ₹60,000 · 2nd Runner-up ₹25,000)',
+    organizer: 'CMR College of Engineering & Technology (CMRCET)',
+    register_url: 'https://unstop.com/hackathons/cmr-hackfest-40-cmr-college-of-engineering-and-technology-cmrcet-hyderabad-1782514',
+    deadline_at: '2026-11-25T23:59:00+05:30',
+    reel_url: '',
+    reel_code: '05',
+    poster_url: '/posters/cmr-hackfest-4-hyderabad.jpg',
+    description: `CMR HACKFEST 4.0 is a 36-Hour National Level Hackathon organized by CMR College of Engineering & Technology (UGC Autonomous Institution), Hyderabad. Following previous editions that brought together 15,000+ registrations and 2,500+ participants from 23 states across India.
+
+Themes & Industry Problem Statements:
+• HealthTech & Agriculture
+• Generative AI & Open Innovation
+• Clean & Green Technology / Renewable Energy
+• Transportation & Logistics / Smart Education
+• Robotics & Drones / IoT / Disaster Management
+
+Cash Prize Breakdown (Total ₹2,22,000):
+• Winner: ₹1,00,000 Cash
+• 1st Runner-Up: ₹60,000 Cash
+• 2nd Runner-Up: ₹25,000 Cash
+• Three Consolation Prizes: ₹5,000 each (includes one exclusive prize for all-girls teams)
+• Theme-Based Prizes: ₹2,000 each for theme winners
+• Incubation support, mentorship, and industry networking for innovative projects
+
+Event Structure & Deadlines:
+• Round 1 (Online Idea Submission via Unstop): Completely FREE. Deadline: 25th November 2026 (11:59 PM IST).
+• Acceptance Notification: On or before 30th November 2026.
+• Round 2 (Offline 36-Hour Hackathon): 08th and 09th January 2027 at CMRCET Campus, Kandlakoya, Medchal Road. Shortlisted participants pay ₹575 per person (includes food and accommodation).`,
+    featured_note: '36-hour national hackathon at CMRCET with ₹2,22,000 cash pool (₹1L first prize), industry-backed problem statements, and incubation & mentorship for top projects. Idea submission closes 25 Nov.',
+    verified: true,
+    status: 'published',
+    created_at: '2026-11-13T21:30:00+05:30',
+    updated_at: '2026-11-13T21:30:00+05:30',
+  },
+  {
     id: 'evt-startup-buildathon-india-2026',
     slug: 'google-deepmind-cloud-startup-buildathon-india-2026',
     title: 'Google DeepMind × Google Cloud | Startup Buildathon India 2026',
