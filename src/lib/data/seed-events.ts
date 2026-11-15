@@ -98,55 +98,6 @@ Rounds & Fees:
     updated_at: '2026-11-13T21:30:00+05:30',
   },
   {
-    id: 'b7e394d7-daa1-4e6c-af3a-4bc0006775af',
-    slug: 'cmr-hackfest-4-hyderabad',
-    title: 'CMR HACKFEST 4.0 – 36 Hours National Level Hackathon',
-    type: 'hackathon',
-    start_at: '2027-01-08T09:00:00+05:30',
-    end_at: '2027-01-09T21:00:00+05:30',
-    venue_name: 'CMR College of Engineering & Technology (CMRCET), Kandlakoya, Medchal Road, Hyderabad, Telangana 501401',
-    venue_map_url: 'https://maps.google.com/?q=CMR+College+of+Engineering+and+Technology+Kandlakoya+Medchal+Hyderabad+501401',
-    city: 'Hyderabad',
-    mode: 'in_person',
-    fee_text: 'Free (Round 1) · ₹575 for offline finalists',
-    is_free: true,
-    eligibility: 'Undergraduate Engineering Students (All disciplines)',
-    team_size: '3 to 6 Members',
-    prize: '₹2,22,000 Cash Prize Pool (Winner ₹1,00,000 · Runner-up ₹60,000 · 2nd Runner-up ₹25,000)',
-    organizer: 'CMR College of Engineering & Technology (CMRCET)',
-    register_url: 'https://unstop.com/hackathons/cmr-hackfest-40-cmr-college-of-engineering-and-technology-cmrcet-hyderabad-1782514',
-    deadline_at: '2026-11-25T23:59:00+05:30',
-    reel_url: '',
-    reel_code: '05',
-    poster_url: '/posters/cmr-hackfest-4-hyderabad.jpg',
-    description: `CMR HACKFEST 4.0 is a 36-Hour National Level Hackathon organized by CMR College of Engineering & Technology (UGC Autonomous Institution), Hyderabad. Following previous editions that brought together 15,000+ registrations and 2,500+ participants from 23 states across India.
-
-Themes & Industry Problem Statements:
-• HealthTech & Agriculture
-• Generative AI & Open Innovation
-• Clean & Green Technology / Renewable Energy
-• Transportation & Logistics / Smart Education
-• Robotics & Drones / IoT / Disaster Management
-
-Cash Prize Breakdown (Total ₹2,22,000):
-• Winner: ₹1,00,000 Cash
-• 1st Runner-Up: ₹60,000 Cash
-• 2nd Runner-Up: ₹25,000 Cash
-• Three Consolation Prizes: ₹5,000 each (includes one exclusive prize for all-girls teams)
-• Theme-Based Prizes: ₹2,000 each for theme winners
-• Incubation support, mentorship, and industry networking for innovative projects
-
-Event Structure & Deadlines:
-• Round 1 (Online Idea Submission via Unstop): Completely FREE. Deadline: 25th November 2026 (11:59 PM IST).
-• Acceptance Notification: On or before 30th November 2026.
-• Round 2 (Offline 36-Hour Hackathon): 08th and 09th January 2027 at CMRCET Campus, Kandlakoya, Medchal Road. Shortlisted participants pay ₹575 per person (includes food and accommodation).`,
-    featured_note: '36-hour national hackathon at CMRCET with ₹2,22,000 cash pool (₹1L first prize), industry-backed problem statements, and incubation & mentorship for top projects. Idea submission closes 25 Nov.',
-    verified: true,
-    status: 'published',
-    created_at: '2026-11-13T21:30:00+05:30',
-    updated_at: '2026-11-13T21:30:00+05:30',
-  },
-  {
     id: 'evt-startup-buildathon-india-2026',
     slug: 'google-deepmind-cloud-startup-buildathon-india-2026',
     title: 'Google DeepMind × Google Cloud | Startup Buildathon India 2026',
