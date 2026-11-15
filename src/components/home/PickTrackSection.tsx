@@ -14,7 +14,7 @@ export function PickTrackSection({ events }: PickTrackSectionProps) {
     (e) => e.type === "hackathon" && e.status === "published" && getEventStatus(e) !== "ended"
   ).length;
   const meetupsCount = events.filter(
-    (e) => (e.type === "meetup" || e.type === "workshop") && e.status === "published" && getEventStatus(e) !== "ended"
+    (e) => (e.type === "meetup" || e.type === "workshop" || e.type === "conference") && e.status === "published" && getEventStatus(e) !== "ended"
   ).length;
 
   return (

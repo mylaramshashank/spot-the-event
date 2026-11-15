@@ -22,7 +22,7 @@ export function Footer() {
             <div className="mt-5 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald" />
               <span className="text-xs font-sans text-offwhite/80">
-                Curated by @buildwithshashankk & Divyend
+                Curated by Mylaram Shashank & Divyend Reddy
               </span>
             </div>
           </div>
