@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { fetchPublishedEventsServer } from "@/lib/supabase/server";
 import { HackathonsClient } from "@/components/events/HackathonsClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Hyderabad Hackathons & Coding Competitions 2026 · Cash Prizes up to ₹2.5L",

@@ -18,8 +18,7 @@ interface HomePageClientProps {
 }
 
 export function HomePageClient({ initialEvents }: HomePageClientProps) {
-  const { events: liveEvents } = useLiveEvents();
-  const events = liveEvents && liveEvents.length > 0 ? liveEvents : initialEvents;
+  const { events } = useLiveEvents(initialEvents);
 
   const openCount = events.filter(
     (e) => e.status === "published" && getEventStatus(e) !== "ended"

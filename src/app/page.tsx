@@ -2,7 +2,7 @@ import React from "react";
 import { fetchPublishedEventsServer } from "@/lib/supabase/server";
 import { HomePageClient } from "@/components/home/HomePageClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   const initialEvents = await fetchPublishedEventsServer();

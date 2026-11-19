@@ -17,8 +17,7 @@ export function EventsCatalogClient({ initialEvents }: EventsCatalogClientProps)
   const searchParams = useSearchParams();
   const initialType = (searchParams?.get("type") as EventType) || "all";
 
-  const { events: liveEvents } = useLiveEvents();
-  const allEvents = liveEvents && liveEvents.length > 0 ? liveEvents : initialEvents;
+  const { events: allEvents } = useLiveEvents(initialEvents);
 
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({

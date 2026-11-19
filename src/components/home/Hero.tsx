@@ -20,7 +20,7 @@ function InstagramProfileCard() {
       initial={{ opacity: 0, y: 30, rotate: 2 }}
       animate={{ opacity: 1, y: 0, rotate: 2 }}
       transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
-      className="relative block w-[280px] sm:w-[320px] md:w-[340px] rounded-3xl bg-white border border-rule shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:rotate-0 transition-all duration-300 group animate-float overflow-hidden"
+      className="relative block w-[280px] sm:w-[320px] md:w-[340px] rounded-3xl bg-white border border-rule shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:rotate-0 transition-all duration-300 group animate-float overflow-hidden will-change-transform"
     >
       {/* Instagram gradient accent glow behind the card */}
       <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-amber-400 via-pink-500 to-purple-600 opacity-20 group-hover:opacity-35 blur-md transition-opacity -z-10" />
@@ -58,10 +58,10 @@ export function Hero({ openCount }: HeroProps) {
         }}
       />
 
-      {/* Floating gradient orbs */}
-      <div className="absolute top-[15%] left-[10%] w-[300px] h-[300px] rounded-full bg-emerald/[0.06] blur-3xl animate-drift-slow pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[5%] w-[400px] h-[400px] rounded-full bg-navy-900/[0.04] blur-3xl animate-drift-reverse pointer-events-none" />
-      <div className="absolute top-[60%] left-[50%] w-[200px] h-[200px] rounded-full bg-emerald/[0.04] blur-2xl animate-pulse-slow pointer-events-none" />
+      {/* Soft ambient gradient orbs (static for 60fps buttery scrolling) */}
+      <div className="absolute top-[15%] left-[10%] w-[320px] h-[320px] rounded-full bg-emerald/[0.05] blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[20%] right-[5%] w-[420px] h-[420px] rounded-full bg-navy-900/[0.035] blur-3xl pointer-events-none" />
+      <div className="absolute top-[60%] left-[50%] w-[220px] h-[220px] rounded-full bg-emerald/[0.03] blur-2xl pointer-events-none" />
 
       {/* Decorative floating shapes */}
       <div className="absolute top-[22%] right-[18%] w-3 h-3 rounded-full border-2 border-emerald/20 animate-float-delayed pointer-events-none hidden sm:block" />

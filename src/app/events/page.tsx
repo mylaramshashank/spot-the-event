@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { fetchPublishedEventsServer } from "@/lib/supabase/server";
 import { EventsCatalogClient } from "@/components/events/EventsCatalogClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function EventsPage() {
   const initialEvents = await fetchPublishedEventsServer();

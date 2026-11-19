@@ -26,7 +26,6 @@ export function getSupabasePublicClient(): SupabaseClient | null {
   if (!url || !key) return null;
   return createClient(url, key, {
     auth: { autoRefreshToken: false, persistSession: false },
-    global: { fetch: noStoreFetch },
   });
 }
 
@@ -36,7 +35,6 @@ export function getSupabaseAdminClient(): SupabaseClient | null {
   if (!url || !key) return null;
   return createClient(url, key, {
     auth: { autoRefreshToken: false, persistSession: false },
-    global: { fetch: noStoreFetch },
   });
 }
 
@@ -79,7 +77,6 @@ export function normalizeEventRow(row: Record<string, unknown>): EventItem {
 }
 
 export async function fetchPublishedEventsServer(): Promise<EventItem[]> {
-  noStore();
   const client = getSupabasePublicClient() || getSupabaseAdminClient();
   if (!client) return SEED_EVENTS;
 

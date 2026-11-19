@@ -4,7 +4,7 @@ import { fetchPublishedEventsServer } from "@/lib/supabase/server";
 import { EventDetailClient } from "@/components/events/EventDetailClient";
 import { formatDate, sanitizeExternalUrl } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 interface EventPageProps {
   params: { slug: string };
