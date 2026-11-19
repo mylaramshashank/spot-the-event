@@ -123,7 +123,7 @@ export function Hero({ openCount }: HeroProps) {
               transition={{ duration: 0.5, delay: 0.25 }}
               className="mt-5 text-base sm:text-lg text-slate font-medium max-w-lg leading-relaxed"
             >
-              Curated Hyderabad hackathons, meetups and workshops featured on @buildwithshashankk. Tap, register, zero noise.
+              Curated Hyderabad hackathons, AI workshops, and tech meetups with cash prize pools, featured on @buildwithshashankk. Tap, register in 30 seconds, zero noise.
             </motion.p>
 
             {/* CTA Buttons */}
