@@ -106,6 +106,7 @@ export function Header() {
               rel="noopener noreferrer"
               onClick={handleInstagram}
               title="Follow @buildwithshashankk on Instagram"
+              aria-label="Follow @buildwithshashankk on Instagram"
               className="inline-flex items-center gap-1.5 h-8 px-2.5 sm:px-3 rounded-full border border-rule text-navy-900 text-xs font-semibold hover:bg-surface active:scale-95 transition-all"
             >
               <svg className="w-3.5 h-3.5 text-navy-900" viewBox="0 0 24 24" fill="currentColor">
@@ -119,6 +120,7 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleWhatsApp}
+              aria-label="Join Spot the Event WhatsApp Channel"
               className="inline-flex items-center gap-1.5 h-8 px-3 sm:px-3.5 rounded-full bg-emerald text-white text-xs font-semibold hover:bg-emerald-600 active:scale-95 transition-all shadow-xs"
             >
               <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">

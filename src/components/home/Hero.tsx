@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { trackClick } from "@/lib/storage";
 
 interface HeroProps {
@@ -13,14 +12,12 @@ interface HeroProps {
 /* ── Floating Instagram Profile Card ── */
 function InstagramProfileCard() {
   return (
-    <motion.a
+    <a
       href="https://www.instagram.com/buildwithshashankk/"
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 30, rotate: 2 }}
-      animate={{ opacity: 1, y: 0, rotate: 2 }}
-      transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
-      className="relative block w-[280px] sm:w-[320px] md:w-[340px] rounded-3xl bg-white border border-rule shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:rotate-0 transition-all duration-300 group animate-float overflow-hidden will-change-transform"
+      aria-label="Visit Shashank on Instagram (@buildwithshashankk)"
+      className="relative block w-[280px] sm:w-[320px] md:w-[340px] rounded-3xl bg-white border border-rule shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden will-change-transform"
     >
       {/* Instagram gradient accent glow behind the card */}
       <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-amber-400 via-pink-500 to-purple-600 opacity-20 group-hover:opacity-35 blur-md transition-opacity -z-10" />
@@ -32,9 +29,10 @@ function InstagramProfileCard() {
         width={872}
         height={898}
         priority
+        sizes="(max-width: 640px) 280px, (max-width: 768px) 320px, 340px"
         className="w-full h-auto block"
       />
-    </motion.a>
+    </a>
   );
 }
 
@@ -45,7 +43,7 @@ export function Hero({ openCount }: HeroProps) {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-16 sm:-mt-20 pt-16 sm:pt-20">
-      {/* ── Animated Background ── */}
+      {/* ── Background ── */}
       {/* Gradient base */}
       <div className="absolute inset-0 bg-gradient-to-br from-offwhite via-offwhite to-emerald-50/40" />
 
@@ -63,11 +61,11 @@ export function Hero({ openCount }: HeroProps) {
       <div className="absolute bottom-[20%] right-[5%] w-[420px] h-[420px] rounded-full bg-navy-900/[0.035] blur-3xl pointer-events-none" />
       <div className="absolute top-[60%] left-[50%] w-[220px] h-[220px] rounded-full bg-emerald/[0.03] blur-2xl pointer-events-none" />
 
-      {/* Decorative floating shapes */}
-      <div className="absolute top-[22%] right-[18%] w-3 h-3 rounded-full border-2 border-emerald/20 animate-float-delayed pointer-events-none hidden sm:block" />
-      <div className="absolute bottom-[30%] left-[8%] w-4 h-4 rounded-sm border-2 border-navy-900/10 rotate-45 animate-float pointer-events-none hidden sm:block" />
-      <div className="absolute top-[45%] right-[8%] w-2 h-2 rounded-full bg-emerald/30 animate-pulse-slow pointer-events-none hidden sm:block" />
-      <div className="absolute bottom-[15%] right-[25%] w-5 h-1 rounded-full bg-navy-900/10 animate-float-delayed pointer-events-none hidden sm:block" />
+      {/* Decorative subtle floating shapes */}
+      <div className="absolute top-[22%] right-[18%] w-3 h-3 rounded-full border-2 border-emerald/20 pointer-events-none hidden sm:block" />
+      <div className="absolute bottom-[30%] left-[8%] w-4 h-4 rounded-sm border-2 border-navy-900/10 rotate-45 pointer-events-none hidden sm:block" />
+      <div className="absolute top-[45%] right-[8%] w-2 h-2 rounded-full bg-emerald/30 pointer-events-none hidden sm:block" />
+      <div className="absolute bottom-[15%] right-[25%] w-5 h-1 rounded-full bg-navy-900/10 pointer-events-none hidden sm:block" />
 
       {/* ── Content ── */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -75,12 +73,7 @@ export function Hero({ openCount }: HeroProps) {
           {/* Left: Text content */}
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl">
             {/* Live Status Pill */}
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-paper/80 backdrop-blur-sm border border-rule shadow-sm text-xs font-semibold text-slate mb-6"
-            >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-paper/80 backdrop-blur-sm border border-rule shadow-sm text-xs font-semibold text-slate mb-6">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald opacity-75 duration-1000" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald" />
@@ -93,70 +86,47 @@ export function Hero({ openCount }: HeroProps) {
                     : "Featured reel events live"}
                 </strong>
               </span>
-            </motion.div>
+            </div>
 
             {/* Headline */}
-            <motion.h1
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-navy-900 leading-[1.08]"
-            >
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-navy-900 leading-[1.08]">
               Every tech event
               <br />
               from the reels,{" "}
               <span className="relative inline-block">
                 <span className="text-emerald">in one place.</span>
-                <motion.span
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-                  className="absolute bottom-1 left-0 right-0 h-[6px] bg-emerald/15 rounded-full origin-left -z-10"
-                />
+                <span className="absolute bottom-1 left-0 right-0 h-[6px] bg-emerald/15 rounded-full -z-10" />
               </span>
-            </motion.h1>
+            </h1>
 
             {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 }}
-              className="mt-5 text-base sm:text-lg text-slate font-medium max-w-lg leading-relaxed"
-            >
+            <p className="mt-5 text-base sm:text-lg text-slate font-medium max-w-lg leading-relaxed">
               Curated Hyderabad hackathons, AI workshops, and tech meetups with cash prize pools, featured on @buildwithshashankk. Tap, register in 30 seconds, zero noise.
-            </motion.p>
+            </p>
 
             {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
-              className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3"
-            >
+            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               <a
                 href="https://whatsapp.com/channel/0029Vb9d8yhK5cDAGTE94z47"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleWhatsApp}
+                aria-label="Join Spot the Event WhatsApp Channel"
                 className="h-12 px-7 rounded-full bg-emerald text-white text-sm font-semibold tracking-wide hover:bg-emerald-600 active:scale-95 transition-all shadow-lg shadow-emerald/20 inline-flex items-center justify-center gap-2"
               >
                 Join WhatsApp Channel &rarr;
               </a>
               <Link
                 href="/events"
+                aria-label="Explore Hyderabad Tech Events"
                 className="h-12 px-7 rounded-full bg-navy-900 text-offwhite text-sm font-semibold tracking-wide hover:bg-navy-800 active:scale-95 transition-all shadow-lg shadow-navy-900/15 inline-flex items-center justify-center"
               >
                 Explore Events &rarr;
               </Link>
-            </motion.div>
+            </div>
 
             {/* Trust markers */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate/70"
-            >
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate/70">
               <span className="flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5 text-emerald" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -175,32 +145,15 @@ export function Hero({ openCount }: HeroProps) {
                 </svg>
                 100% free
               </span>
-            </motion.div>
+            </div>
           </div>
 
-          {/* Right: Floating Instagram Card */}
-          <div className="shrink-0 flex items-center justify-center">
+          {/* Right: Floating Card */}
+          <div className="flex-1 flex justify-center lg:justify-end items-center">
             <InstagramProfileCard />
           </div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-[10px] font-semibold tracking-widest uppercase text-slate/50">Scroll</span>
-        <div className="w-5 h-8 rounded-full border-2 border-navy-900/15 flex items-start justify-center pt-1.5">
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-1 h-1.5 rounded-full bg-navy-900/30"
-          />
-        </div>
-      </motion.div>
     </section>
   );
 }
