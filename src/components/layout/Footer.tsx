@@ -122,7 +122,7 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/admin" className="hover:text-offwhite text-offwhite/40 transition-colors">
+                  <Link href="/admin" className="hover:text-offwhite text-offwhite/70 transition-colors">
                     Organizer Admin
                   </Link>
                 </li>
@@ -133,7 +133,7 @@ export function Footer() {
               <span className="block text-[11px] font-sans font-semibold tracking-eyebrow uppercase text-emerald mb-3">
                 Venlix Platform
               </span>
-              <p className="text-xs text-offwhite/70 leading-relaxed">
+              <p className="text-xs text-offwhite/80 leading-relaxed">
                 Spot the Event is built by Venlix, a visual-first way to hire video editors.
               </p>
               <a
@@ -149,7 +149,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-offwhite/50 font-sans gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-offwhite/70 font-sans gap-4">
           <p>© {new Date().getFullYear()} Spot the Event · Built with care by Venlix</p>
           <p className="tracking-wide">Made in Hyderabad, Telangana</p>
         </div>

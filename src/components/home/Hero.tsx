@@ -126,7 +126,7 @@ export function Hero({ openCount }: HeroProps) {
             </div>
 
             {/* Trust markers */}
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate/70">
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate-600 font-semibold">
               <span className="flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5 text-emerald" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
