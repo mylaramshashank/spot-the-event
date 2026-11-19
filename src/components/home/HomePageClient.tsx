@@ -7,7 +7,6 @@ import { ThisWeekSection } from "@/components/home/ThisWeekSection";
 import { PickTrackSection } from "@/components/home/PickTrackSection";
 import { FromReelsSection } from "@/components/home/FromReelsSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
-import { FAQSection } from "@/components/home/FAQSection";
 import { JoinChannelSection } from "@/components/home/JoinChannelSection";
 import { SuggestSection } from "@/components/home/SuggestSection";
 import { VenlixStrip } from "@/components/home/VenlixStrip";
@@ -33,7 +32,6 @@ export function HomePageClient({ initialEvents }: HomePageClientProps) {
       <PickTrackSection events={events} />
       <FromReelsSection events={events} />
       <HowItWorksSection />
-      <FAQSection />
       <JoinChannelSection />
       <SuggestSection />
       <VenlixStrip />
