@@ -1,34 +1,57 @@
-"use client";
-
 import React from "react";
-import { Hero } from "@/components/home/Hero";
-import { ThisWeekSection } from "@/components/home/ThisWeekSection";
-import { PickTrackSection } from "@/components/home/PickTrackSection";
-import { FromReelsSection } from "@/components/home/FromReelsSection";
-import { HowItWorksSection } from "@/components/home/HowItWorksSection";
-import { JoinChannelSection } from "@/components/home/JoinChannelSection";
-import { SuggestSection } from "@/components/home/SuggestSection";
-import { VenlixStrip } from "@/components/home/VenlixStrip";
-import { useLiveEvents } from "@/lib/useLiveEvents";
-import { getEventStatus } from "@/lib/utils";
+import { fetchPublishedEventsServer } from "@/lib/supabase/server";
+import { HomePageClient } from "@/components/home/HomePageClient";
+import { HOME_FAQS } from "@/components/home/FAQSection";
 
-export default function HomePage() {
-  const { events } = useLiveEvents();
+export const dynamic = "force-dynamic";
 
-  const openCount = events.filter(
-    (e) => e.status === "published" && getEventStatus(e) !== "ended"
-  ).length;
+export default async function HomePage() {
+  const initialEvents = await fetchPublishedEventsServer();
+
+  const baseUrl = "https://spot-the-event.vercel.app";
+
+  const homeStructuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ItemList",
+        "@id": `${baseUrl}/#featured-events`,
+        name: "Upcoming Tech Events & Hackathons in Hyderabad",
+        description:
+          "Curated list of verified hackathons, coding competitions, AI workshops, and developer meetups happening in Hyderabad.",
+        numberOfItems: initialEvents.length,
+        itemListElement: initialEvents.map((event, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: event.title,
+          url: `${baseUrl}/events/${event.slug}`,
+          description: event.featured_note || event.description,
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${baseUrl}/#faqs`,
+        mainEntity: HOME_FAQS.map((faq) => ({
+          "@type": "Question",
+          name: faq.q,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.a,
+          },
+        })),
+      },
+    ],
+  };
 
   return (
-    <div className="w-full">
-      <Hero openCount={openCount} />
-      <ThisWeekSection events={events} />
-      <PickTrackSection events={events} />
-      <FromReelsSection events={events} />
-      <HowItWorksSection />
-      <JoinChannelSection />
-      <SuggestSection />
-      <VenlixStrip />
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homeStructuredData).replace(/</g, "\\u003c"),
+        }}
+      />
+      <HomePageClient initialEvents={initialEvents} />
+    </>
   );
 }

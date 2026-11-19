@@ -41,6 +41,55 @@ export const metadata: Metadata = {
   },
 };
 
+const communityFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is the Hyderabad tech WhatsApp Channel completely free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, 100% free. No paid tiers, no subscription fees."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can other members or organizers see my phone number in the WhatsApp Channel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Unlike WhatsApp Groups or Communities, WhatsApp Channels are private broadcast channels. Neither other members nor admins can see your personal phone number or profile details."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often do you send event updates on the WhatsApp channel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Only when a new curated event or hackathon is verified, plus an occasional urgent 24-hour reminder when registrations are closing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if Instagram's in-app browser blocks WhatsApp channel links?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the 'Copy Channel Link' button and paste it directly into WhatsApp or open in Safari / Chrome."
+      }
+    }
+  ]
+};
+
 export default function CommunityLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(communityFaqJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      {children}
+    </>
+  );
 }
