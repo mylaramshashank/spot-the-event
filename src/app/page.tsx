@@ -1,7 +1,7 @@
 import React from "react";
 import { fetchPublishedEventsServer } from "@/lib/supabase/server";
 import { HomePageClient } from "@/components/home/HomePageClient";
-import { HOME_FAQS } from "@/components/home/FAQSection";
+import { HOME_FAQS } from "@/lib/data/faqs";
 
 export const dynamic = "force-dynamic";
 
