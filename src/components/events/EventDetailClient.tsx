@@ -17,6 +17,69 @@ interface EventDetailClientProps {
   allEvents: EventItem[];
 }
 
+function renderDescriptionWithLinks(text: string) {
+  if (!text) return null;
+
+  return text.split("\n").map((line, lineIdx) => {
+    const linkRegex = /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s]+)/g;
+    const parts = line.split(linkRegex);
+
+    return (
+      <span key={lineIdx} className="block min-h-[1.25rem]">
+        {parts.map((part, partIdx) => {
+          if (!part) return null;
+
+          const mdMatch = part.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
+          if (mdMatch) {
+            const [, label, url] = mdMatch;
+            return (
+              <a
+                key={partIdx}
+                href={sanitizeExternalUrl(url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-emerald font-semibold underline underline-offset-2 hover:text-emerald-700 transition-colors inline-flex items-center gap-0.5"
+              >
+                <span>{label}</span>
+                <svg className="w-3.5 h-3.5 opacity-75 shrink-0 inline ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            );
+          }
+
+          if (/^https?:\/\//.test(part)) {
+            let cleanUrl = part;
+            let trailingPunct = "";
+            if (/[.,;:)]$/.test(cleanUrl)) {
+              trailingPunct = cleanUrl.slice(-1);
+              cleanUrl = cleanUrl.slice(0, -1);
+            }
+            return (
+              <span key={partIdx}>
+                <a
+                  href={sanitizeExternalUrl(cleanUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald font-semibold underline underline-offset-2 hover:text-emerald-700 transition-colors inline-flex items-center gap-0.5 break-all"
+                >
+                  <span>{cleanUrl}</span>
+                  <svg className="w-3.5 h-3.5 opacity-75 shrink-0 inline ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+                {trailingPunct}
+              </span>
+            );
+          }
+
+          return <span key={partIdx}>{part}</span>;
+        })}
+      </span>
+    );
+  });
+}
+
 export function EventDetailClient({ event: initialEvent, allEvents: initialAllEvents }: EventDetailClientProps) {
   const { events: liveEvents } = useLiveEvents();
   const [saved, setSaved] = useState(false);
@@ -307,7 +370,7 @@ export function EventDetailClient({ event: initialEvent, allEvents: initialAllEv
           About this event
         </h2>
         <div className="text-sm sm:text-base font-sans text-navy-900/90 leading-relaxed whitespace-pre-line">
-          {event.description}
+          {renderDescriptionWithLinks(event.description)}
         </div>
       </div>
 
