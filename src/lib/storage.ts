@@ -6,7 +6,7 @@ import { sanitizeExternalUrl } from "./utils";
 
 const EVENTS_KEY = "venlix_spot_events_v1";
 const SEED_VERSION_KEY = "venlix_spot_seed_version";
-const SEED_VERSION = "2026-11-13-cmr-poster-v8";
+const SEED_VERSION = "2026-11-20-aiyatra-codex-v10";
 const SAVED_KEY = "venlix_spot_saved_v1";
 const SUGGESTIONS_KEY = "venlix_spot_suggestions_v1";
 const CLICKS_KEY = "venlix_spot_clicks_v1";
