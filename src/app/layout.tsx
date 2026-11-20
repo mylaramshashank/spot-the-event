@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    google: "TDqu3sS5x0V5jMf3PTmWEPQJN3OGFNOLyHJEghNdMOA",
   },
   robots: {
     index: true,
@@ -151,6 +151,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jakarta.variable} font-sans`}>
       <head>
+        <meta name="google-site-verification" content="TDqu3sS5x0V5jMf3PTmWEPQJN3OGFNOLyHJEghNdMOA" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGlobal).replace(/</g, "\\u003c") }}
