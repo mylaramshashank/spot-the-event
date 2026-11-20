@@ -23,38 +23,23 @@ export const SEED_EVENTS: EventItem[] = [
     reel_url: '',
     reel_code: '07',
     poster_url: '/posters/llm-observability-aiyatra-lseg.jpg',
-    description: `LLM Observability: From Pre-Training to Production is a full-day in-person workshop and hands-on hackathon at London Stock Exchange Group (LSEG) Hyderabad, presented by AIYatra and sponsored by Grafana and Friends Hyderabad.
+    description: `⚠️ **MANDATORY GATE PASS RULE:** You must **RSVP on Meetup AND complete the Google Pass Form** (https://forms.gle/QqPNKqavEGK7phjG9) to enter. LSEG security will deny building entry if either is missing.
 
-⚠️ MANDATORY ENTRY REQUIREMENT:
-You MUST both RSVP on Meetup AND fill this mandatory Google Form for security access at LSEG:
-👉 Google Form: https://forms.gle/QqPNKqavEGK7phjG9
-(If either is not completed, building security will not permit entry at the venue).
+Event Highlights:
+• **Full-Day AI Workshop & Hackathon:** In-person at **London Stock Exchange Group (LSEG)**, Madhapur, backed by **Grafana and Friends**.
+• **Pre & Post-Training Observability:** Gradient norms, loss dynamics, MoE expert balancing, GPU utilization, and KL divergence.
+• **Inference & Production:** TTFT, TPOT, GPU KV cache utilization, request costs, agent tracing, and tool-call debugging.
+• **Afternoon Hackathon:** Hands-on team building sprint with live presentations and technical feedback.
+• **Free Food & Swags:** Complimentary lunch and sponsor perks provided to all attendees.
 
-What We'll Cover:
-• Pre-Training: Gradient norms, loss dynamics, MoE expert balancing, GPU utilization, and training throughput.
-• Post-Training: KL divergence, reward dynamics, reward hacking, and model evaluation metrics.
-• Inference: TTFT (Time to First Token), TPOT (Time per Output Token), KV cache utilization, GPU memory, batching, and throughput.
-• Production Applications: Cost per request, response quality, agent and tool-call tracing, task success, and application-level monitoring.
-
-Event Schedule (Saturday, 28 Nov 2026):
-• 9:00 AM – 10:10 AM: Session 1 (LLM Pre-Training Observability)
-• 10:10 AM – 10:50 AM: Session 2 (Post-Training & Reward Dynamics)
-• 10:50 AM – 11:05 AM: Tea Break ☕
-• 11:05 AM – 11:45 AM: Session 3 (Inference Metrics & GPU KV Cache)
-• 11:45 AM – 12:30 PM: Session 4 (Production Agent Tracing & Cost)
-• 12:30 PM – 1:00 PM: Q&A and Community Discussion
-• 1:00 PM – 2:00 PM: Lunch (Provided to all attendees) 🍕
-• 2:00 PM – 4:15 PM: Hands-on Afternoon Hackathon 💻
-• 4:15 PM – 5:00 PM: Hackathon Presentations & Wrap-up
-
-Prerequisites & What to Bring:
+Prerequisites:
 • Bring your laptop and charger.
-• Install OpenCode before attending: https://opencode.ai/
+• Install **OpenCode** before coming: https://opencode.ai/
 
 Important Links:
-• Meetup RSVP: https://www.meetup.com/aiyatra/events/317425521/
-• Mandatory Security Pass Form: https://forms.gle/QqPNKqavEGK7phjG9
-• WhatsApp Discussion Group: https://chat.whatsapp.com/GWXTDtGjIs99fDtUGKJy5J?mode=gi_t`,
+• **Meetup RSVP:** https://www.meetup.com/aiyatra/events/317425521/
+• **Mandatory Security Pass Form:** https://forms.gle/QqPNKqavEGK7phjG9
+• **WhatsApp Group:** https://chat.whatsapp.com/GWXTDtGjIs99fDtUGKJy5J?mode=gi_t`,
     featured_note: 'Deep-dive into real-world LLM observability inside LSEG Hyderabad with hands-on afternoon hackathon, free lunch, and Grafana community perks. Make sure to fill the mandatory Google Form!',
     verified: true,
     status: 'published',
@@ -83,22 +68,19 @@ Important Links:
     reel_url: '',
     reel_code: '08',
     poster_url: '/posters/build-with-ai-agents-codex-hyderabad.jpg',
-    description: `Join the Hyderabad Codex Community for "Build with AI Agents" — an exclusive, hands-on developer meetup dedicated to the next frontier of autonomous coding agents, multi-agent frameworks, and shipping production software with AI.
+    description: `⚠️ **STRICT REGISTRATION RULE:** Seats are strictly limited. Registrations are **subject to host approval on Luma** — exact venue location in Hyderabad will be emailed only to approved attendees.
 
 Event Highlights:
-• 🤖 Autonomous Coding Agents: Deep dives into building and deploying agentic workflows with OpenAI Codex and cutting-edge agent tools.
-• 🚀 Live Build & Ship: Interactive sessions showcasing practical agent integrations from concept to deployed application.
-• 🤝 Partner Ecosystem: Supported by UiPath and Entire.io with industry leads sharing real enterprise agent implementations.
-• 🍕 Community Perks: Exclusive community swags, developer networking, and complimentary lunch & drinks.
+• **Autonomous Coding Agents:** Master agentic workflows, multi-agent frameworks, and real software generation using OpenAI Codex.
+• **Live Build & Ship:** Interactive sessions taking ideas from prompt to production-ready deployed web applications.
+• **Enterprise Sponsors:** Backed by **UiPath** and **Entire.io** with live architectural walk-throughs.
+• **Community Perks:** Exclusive community swags, developer networking, and free lunch & beverages.
 
-Event Details:
-• Date: Sunday, 29 November 2026
-• Time: 10:00 AM – 3:30 PM IST
-• Location: Hyderabad, Telangana (Exact venue released to approved attendees via Luma confirmation)
+Prerequisites:
+• Bring your laptop and charger to build along during live demos.
 
-Registration:
-• RSVP on Luma: https://luma.com/t9h1gvc4?tk=yOECTw
-• Note: Spots are limited to ensure hands-on interaction. Registrations are subject to host approval.`,
+Important Links:
+• **RSVP on Luma:** https://luma.com/t9h1gvc4?tk=yOECTw`,
     featured_note: 'Official Hyderabad Codex Community meetup supported by UiPath and Entire.io. Learn how to build and orchestrate autonomous AI agents with hands-on live demos, free lunch & swags.',
     verified: true,
     status: 'published',
@@ -127,23 +109,17 @@ Registration:
     reel_url: '',
     reel_code: '05',
     poster_url: '/posters/hack-with-hyderabad-40-microsoft.jpg',
-    description: `Hack With Hyderabad 4.0, presented by Hack With India and Devnovate, is an 8-hour offline hackathon hosted inside Microsoft Office Hyderabad on Friday, 18 December 2026.
+    description: `⚠️ **PARTICIPANT REQUIREMENT:** Bring your own **laptop and charger**. Open to all skill levels (individual or teams of 2 to 6).
 
 Event Highlights:
-• 🏢 Venue: Microsoft Office, Hyderabad (In-Person / Offline).
-• 💼 Career & PPOs: Direct access to internship opportunities with Pre-Placement Offer (PPO) potential.
-• 🎁 $99 Credits: Every participant receives $99 worth of developer credits.
-• 🍕 Perks: Free meals throughout the day, exclusive event swags, and interactive workshops.
-• 👥 Team Size: 2 to 6 members. Solo participants can find teammates via the Devnovate Team Formation portal.
-• 💻 What to Bring: Participants must bring their own laptops and chargers.
-
-Schedule & Timings:
-• Date: Friday, 18 December 2026
-• Timing: 10:00 AM – 6:00 PM IST (8 Hours Sprint)
-• Venue: Microsoft Office, Gachibowli, Hyderabad
+• **8-Hour Offline Sprint:** Hosted in-person inside the **Microsoft Office Hyderabad** campus in Gachibowli on Friday, 18 Dec 2026.
+• **Internship Interviews & PPOs:** Direct access to career opportunities and Pre-Placement Offers with partner firms.
+• **$99 Dev Credits:** Every registered participant receives $99 worth of developer platform credits.
+• **Free Meals & Swags:** Free breakfast, lunch, refreshments, workshops, and exclusive event swags.
+• **Team Matchmaking:** Solo attendees can form teams directly on-site before the sprint begins.
 
 Important Links:
-• WhatsApp Discussion Group: https://chat.whatsapp.com/C1Rj5zxDEEOCLc2jqgY4f6`,
+• **WhatsApp Discussion Group:** https://chat.whatsapp.com/C1Rj5zxDEEOCLc2jqgY4f6`,
     featured_note: 'Offline 8-hour hackathon inside Microsoft Office Hyderabad with PPO internship opportunities, $99 developer credits, free meals & swags.',
     verified: true,
     status: 'published',
@@ -172,23 +148,16 @@ Important Links:
     reel_url: '',
     reel_code: '06',
     poster_url: '/posters/ai-innovate-beyond-intelligence-microsoft-epam.jpg',
-    description: `Welcome to AI INNOVATE | BEYOND INTELLIGENCE, a premier in-person AI summit organized by Microsoft AI Innovators Hub in collaboration with EPAM Systems, Microsoft, Synergetics Learning, Databricks, and Rinav Tech.
-
-Bringing together technology enthusiasts, developers, AI practitioners, and innovators to explore the rapidly evolving world of Artificial Intelligence.
+    description: `⚠️ **ENTRY REQUIREMENT:** Free entry with mandatory RSVP. Seats are limited on a **strict first-come, first-served basis** at the EPAM security reception.
 
 Event Highlights:
-• Keynotes & Technical Deep Dives: Real-world AI architectures, LLM applications, generative AI workflows, and cloud-scale machine learning.
-• In-Person at EPAM Systems: Experience the new EPAM campus in Gowra Palladium, HITEC City.
-• Industry Networking: Connect with AI leads, engineers, and founders across Microsoft, Databricks, EPAM, and Hyderabad tech communities.
-• Partner Communities: Hyderabad Python Users Group (HydPy), Hyderabad Data & AI Community, Microsoft Power Innovators, and Global AI Community.
+• **Premier AI Summit:** Hosted inside **EPAM Systems (12th Floor, Gowra Palladium, HITEC City)** by Microsoft AI Innovators Hub.
+• **Technical Deep Dives:** Real-world LLM deployments, generative AI pipelines, and cloud-scale machine learning.
+• **Partner Communities:** Sessions led by engineers from **Microsoft, Databricks, EPAM, Synergetics, and HydPy**.
+• **High-Impact Networking:** Connect directly with AI architects, technical leads, and founders across Hyderabad.
 
-Event Schedule & Timings:
-• Date: Saturday, 21st November 2026
-• Time: Starts at 9:00 AM IST
-• Venue: EPAM Systems, 12th Floor, Gowra Palladium, Silpa Gram Craft Village, HITEC City, Hyderabad 500032
-
-Registration:
-Participation is completely FREE (RSVP required via official site). Seats are limited on a first-come, first-served basis.`,
+Important Links:
+• **Official RSVP:** https://www.maih.live/`,
     featured_note: 'Full-day in-person AI summit inside EPAM Systems (Gowra Palladium, HITEC City) presented by Microsoft AI Innovators Hub with Microsoft, Databricks, Synergetics, and HydPy.',
     verified: true,
     status: 'published',
@@ -259,21 +228,16 @@ Aspiring entrepreneurs, early-stage startups, solo founders, and teams building 
     reel_url: '',
     reel_code: '02',
     poster_url: '/posters/beyond-search-to-sell-piperocket-google.jpg',
-    description: `Closed-door session hosted inside Google Hyderabad Office by PipeRocket in partnership with Google for B2B SaaS founders and marketing leaders, focused on real campaigns and pipeline results (Storylane, Xflow, LeadSquared) led by PipeRocket Co-founders Praveen and Kim.
+    description: `⚠️ **STRICT ACCESS RULE:** Closed-door executive session. Attendance requires **prior approval on Luma** for building security access into the Google Hyderabad Office.
 
-What We Will Cover:
-• Performance Marketing — Structuring Google Ads and paid social for qualified pipeline instead of cheap leads.
-• SEO & AEO/GEO — Capturing visibility and trust in the AI search landscape.
-• AI vs. Humans — Balancing automation speed with human judgment in deal conversion.
+Event Highlights:
+• **Inside Google Office:** Exclusive session at **Google Hyderabad (DivyaSree Omega, Kothaguda)** hosted by PipeRocket and Google.
+• **Audience:** Curated for B2B SaaS founders, growth marketers, and demand generation leaders.
+• **Core Topics:** Google Ads for high-intent pipeline, AI search optimization (AEO/GEO), and AI vs. human deal conversion.
+• **Networking & Perks:** Co-founder fireside chat, complimentary high tea, and direct networking.
 
-Agenda (Thu, 26 Nov · 3:00 PM – 5:00 PM):
-• 3:00 PM · Check-in and networking
-• 3:30 PM · Performance Marketing: Start, Optimize, and Scale
-• 4:00 PM · SEO and AEO: Visibility, Trust, and Pipeline
-• 4:30 PM · Fireside chat
-• 5:00 PM · High tea and open networking
-
-Limited seats — approval required via Luma.`,
+Important Links:
+• **RSVP on Luma:** https://luma.com/8lc47mnc?tk=ElU71B`,
     featured_note: 'Hosted inside Google Hyderabad Office (Kothaguda) — rare closed-door access to PipeRocket x Google founders decoding B2B performance marketing, AEO/GEO & AI growth playbooks, plus high tea networking.',
     verified: true,
     status: 'published',

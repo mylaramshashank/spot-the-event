@@ -17,67 +17,133 @@ interface EventDetailClientProps {
   allEvents: EventItem[];
 }
 
+function parseInlineFormatting(text: string): React.ReactNode[] {
+  // Regex splitting by markdown links, raw urls, and bold text **...**
+  const tokenRegex = /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s]+|\*\*[^*]+\*\*)/g;
+  const parts = text.split(tokenRegex);
+
+  return parts.map((part, idx) => {
+    if (!part) return null;
+
+    // Check **bold**
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return (
+        <strong key={idx} className="font-bold text-navy-900">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Check [label](url)
+    const mdMatch = part.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
+    if (mdMatch) {
+      const [, label, url] = mdMatch;
+      return (
+        <a
+          key={idx}
+          href={sanitizeExternalUrl(url)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-emerald hover:underline font-semibold inline-flex items-center gap-0.5 underline-offset-2 transition-colors"
+        >
+          <span>{label}</span>
+          <svg className="w-3.5 h-3.5 opacity-75 shrink-0 inline ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      );
+    }
+
+    // Check bare URL
+    if (/^https?:\/\//.test(part)) {
+      let cleanUrl = part;
+      let trailingPunct = "";
+      if (/[.,;:)]$/.test(cleanUrl)) {
+        trailingPunct = cleanUrl.slice(-1);
+        cleanUrl = cleanUrl.slice(0, -1);
+      }
+      return (
+        <span key={idx}>
+          <a
+            href={sanitizeExternalUrl(cleanUrl)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald hover:underline font-semibold inline-flex items-center gap-0.5 underline-offset-2 transition-colors break-all"
+          >
+            <span>{cleanUrl}</span>
+            <svg className="w-3.5 h-3.5 opacity-75 shrink-0 inline ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+          {trailingPunct}
+        </span>
+      );
+    }
+
+    return <span key={idx}>{part}</span>;
+  });
+}
+
 function renderDescriptionWithLinks(text: string) {
   if (!text) return null;
 
-  return text.split("\n").map((line, lineIdx) => {
-    const linkRegex = /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s]+)/g;
-    const parts = line.split(linkRegex);
+  const lines = text.split("\n");
 
-    return (
-      <span key={lineIdx} className="block min-h-[1.25rem]">
-        {parts.map((part, partIdx) => {
-          if (!part) return null;
+  return (
+    <div className="space-y-1.5 font-sans text-xs sm:text-sm text-navy-900/90 leading-relaxed">
+      {lines.map((rawLine, lineIdx) => {
+        const line = rawLine.trim();
 
-          const mdMatch = part.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
-          if (mdMatch) {
-            const [, label, url] = mdMatch;
-            return (
-              <a
-                key={partIdx}
-                href={sanitizeExternalUrl(url)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-emerald font-semibold underline underline-offset-2 hover:text-emerald-700 transition-colors inline-flex items-center gap-0.5"
-              >
-                <span>{label}</span>
-                <svg className="w-3.5 h-3.5 opacity-75 shrink-0 inline ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            );
-          }
+        if (!line) {
+          return <div key={lineIdx} className="h-1.5" />;
+        }
 
-          if (/^https?:\/\//.test(part)) {
-            let cleanUrl = part;
-            let trailingPunct = "";
-            if (/[.,;:)]$/.test(cleanUrl)) {
-              trailingPunct = cleanUrl.slice(-1);
-              cleanUrl = cleanUrl.slice(0, -1);
-            }
-            return (
-              <span key={partIdx}>
-                <a
-                  href={sanitizeExternalUrl(cleanUrl)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-emerald font-semibold underline underline-offset-2 hover:text-emerald-700 transition-colors inline-flex items-center gap-0.5 break-all"
-                >
-                  <span>{cleanUrl}</span>
-                  <svg className="w-3.5 h-3.5 opacity-75 shrink-0 inline ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-                {trailingPunct}
-              </span>
-            );
-          }
+        // Alert Callout (starts with ⚠️ or 🚨 or [ALERT])
+        if (line.startsWith("⚠️") || line.startsWith("🚨") || line.startsWith("[ALERT]")) {
+          return (
+            <div
+              key={lineIdx}
+              className="my-3 p-3 sm:p-4 bg-amber-500/10 border-l-4 border-amber-500 rounded-r-xl text-amber-950 text-xs sm:text-sm font-medium leading-relaxed shadow-2xs"
+            >
+              {parseInlineFormatting(line)}
+            </div>
+          );
+        }
 
-          return <span key={partIdx}>{part}</span>;
-        })}
-      </span>
-    );
-  });
+        // Section headings (e.g. "What We'll Cover:", "Event Highlights:", "Important Links:", etc.)
+        const isHeading = /^[A-Za-z0-9\s'&—/]+:$/.test(line) && !line.startsWith("•") && !line.startsWith("-") && line.length < 50;
+        if (isHeading) {
+          return (
+            <h3
+              key={lineIdx}
+              className="font-display font-bold text-navy-900 text-sm sm:text-base pt-3 pb-1 tracking-tight flex items-center gap-2"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald shrink-0" />
+              <span>{line.replace(/:$/, "")}</span>
+            </h3>
+          );
+        }
+
+        // Bullet points
+        if (line.startsWith("•") || line.startsWith("-")) {
+          const content = line.replace(/^[•-]\s*/, "");
+          return (
+            <div key={lineIdx} className="flex items-start gap-2.5 py-0.5">
+              <span className="text-emerald font-bold mt-0.5 shrink-0 text-sm leading-none">•</span>
+              <span className="flex-1">{parseInlineFormatting(content)}</span>
+            </div>
+          );
+        }
+
+        // Default regular paragraph line
+        return (
+          <p key={lineIdx} className="py-0.5">
+            {parseInlineFormatting(line)}
+          </p>
+        );
+      })}
+    </div>
+  );
 }
 
 export function EventDetailClient({ event: initialEvent, allEvents: initialAllEvents }: EventDetailClientProps) {
@@ -369,7 +435,7 @@ export function EventDetailClient({ event: initialEvent, allEvents: initialAllEv
         <h2 className="font-display text-2xl font-bold text-navy-900 mb-3 pb-2 border-b border-rule">
           About this event
         </h2>
-        <div className="text-sm sm:text-base font-sans text-navy-900/90 leading-relaxed whitespace-pre-line">
+        <div className="text-navy-900/90 leading-relaxed">
           {renderDescriptionWithLinks(event.description)}
         </div>
       </div>
