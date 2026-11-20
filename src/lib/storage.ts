@@ -259,6 +259,15 @@ export function trackClick(kind: ClickKind, eventId?: string, source = "web"): v
       }),
       keepalive: true,
     }).catch(() => {});
+
+    // Dispatch to Google Analytics 4 if loaded
+    if (typeof window !== "undefined" && typeof (window as unknown as { gtag?: Function }).gtag === "function") {
+      (window as unknown as { gtag: Function }).gtag("event", kind, {
+        event_category: "Engagement",
+        event_label: source,
+        event_id: eventId,
+      });
+    }
   } catch {
     // Non-blocking analytics failure
   }
