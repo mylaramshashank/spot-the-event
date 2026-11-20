@@ -90,12 +90,12 @@ function renderDescriptionWithLinks(text: string) {
   const lines = text.split("\n");
 
   return (
-    <div className="space-y-1.5 font-sans text-xs sm:text-sm text-navy-900/90 leading-relaxed">
+    <div className="space-y-2 font-sans text-[15px] sm:text-base text-navy-900/90 leading-relaxed sm:leading-7">
       {lines.map((rawLine, lineIdx) => {
         const line = rawLine.trim();
 
         if (!line) {
-          return <div key={lineIdx} className="h-1.5" />;
+          return <div key={lineIdx} className="h-2" />;
         }
 
         // Alert Callout (starts with ⚠️ or 🚨 or [ALERT])
@@ -103,7 +103,7 @@ function renderDescriptionWithLinks(text: string) {
           return (
             <div
               key={lineIdx}
-              className="my-3 p-3 sm:p-4 bg-amber-500/10 border-l-4 border-amber-500 rounded-r-xl text-amber-950 text-xs sm:text-sm font-medium leading-relaxed shadow-2xs"
+              className="my-3.5 p-4 sm:p-5 bg-amber-500/10 border-l-4 border-amber-500 rounded-r-xl text-amber-950 text-sm sm:text-base font-medium leading-relaxed shadow-2xs"
             >
               {parseInlineFormatting(line)}
             </div>
@@ -116,9 +116,9 @@ function renderDescriptionWithLinks(text: string) {
           return (
             <h3
               key={lineIdx}
-              className="font-display font-bold text-navy-900 text-sm sm:text-base pt-3 pb-1 tracking-tight flex items-center gap-2"
+              className="font-display font-bold text-navy-900 text-base sm:text-lg pt-4 pb-1.5 tracking-tight flex items-center gap-2"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-emerald shrink-0" />
               <span>{line.replace(/:$/, "")}</span>
             </h3>
           );
@@ -128,8 +128,8 @@ function renderDescriptionWithLinks(text: string) {
         if (line.startsWith("•") || line.startsWith("-")) {
           const content = line.replace(/^[•-]\s*/, "");
           return (
-            <div key={lineIdx} className="flex items-start gap-2.5 py-0.5">
-              <span className="text-emerald font-bold mt-0.5 shrink-0 text-sm leading-none">•</span>
+            <div key={lineIdx} className="flex items-start gap-2.5 py-1 text-[15px] sm:text-base leading-relaxed">
+              <span className="text-emerald font-bold mt-1 shrink-0 text-base leading-none">•</span>
               <span className="flex-1">{parseInlineFormatting(content)}</span>
             </div>
           );
@@ -137,7 +137,7 @@ function renderDescriptionWithLinks(text: string) {
 
         // Default regular paragraph line
         return (
-          <p key={lineIdx} className="py-0.5">
+          <p key={lineIdx} className="py-1 text-[15px] sm:text-base leading-relaxed">
             {parseInlineFormatting(line)}
           </p>
         );
@@ -372,21 +372,21 @@ export function EventDetailClient({ event: initialEvent, allEvents: initialAllEv
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 font-sans">
           <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
             <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">When</dt>
-            <dd className="mt-1 text-sm font-normal text-slate">
+            <dd className="mt-1 text-[15px] sm:text-base font-medium text-navy-900">
               {formatDate(event.start_at)} ({formatTime(event.start_at)})
             </dd>
           </div>
 
           <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
             <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Where</dt>
-            <dd className="mt-1 text-sm font-normal text-slate">
+            <dd className="mt-1 text-[15px] sm:text-base font-medium text-navy-900 leading-snug">
               {event.venue_name}
               {event.venue_map_url && (
                 <a
                   href={sanitizeExternalUrl(event.venue_map_url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-xs font-medium text-emerald hover:underline mt-1"
+                  className="block text-sm font-semibold text-emerald hover:underline mt-1.5"
                 >
                   View on Google Maps &rarr;
                 </a>
@@ -396,34 +396,34 @@ export function EventDetailClient({ event: initialEvent, allEvents: initialAllEv
 
           <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
             <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Fee</dt>
-            <dd className="mt-1 text-sm font-normal text-slate">{event.fee_text}</dd>
+            <dd className="mt-1 text-[15px] sm:text-base font-medium text-navy-900">{event.fee_text}</dd>
           </div>
 
           <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
             <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Eligibility</dt>
-            <dd className="mt-1 text-sm font-normal text-slate">{event.eligibility}</dd>
+            <dd className="mt-1 text-[15px] sm:text-base font-medium text-navy-900 leading-snug">{event.eligibility}</dd>
           </div>
 
           <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
             <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Team Size</dt>
-            <dd className="mt-1 text-sm font-normal text-slate">{event.team_size}</dd>
+            <dd className="mt-1 text-[15px] sm:text-base font-medium text-navy-900">{event.team_size}</dd>
           </div>
 
           {event.prize && (
             <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
               <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Prize Pool</dt>
-              <dd className="mt-1 text-sm font-normal text-emerald">{event.prize}</dd>
+              <dd className="mt-1 text-[15px] sm:text-base font-bold text-emerald">{event.prize}</dd>
             </div>
           )}
 
           <div className="pb-3.5 border-b border-rule/50 sm:border-b-0 sm:pb-0">
             <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Organizer</dt>
-            <dd className="mt-1 text-sm font-normal text-slate">{event.organizer}</dd>
+            <dd className="mt-1 text-[15px] sm:text-base font-medium text-navy-900">{event.organizer}</dd>
           </div>
 
           <div>
             <dt className="text-[13px] font-extrabold tracking-wider uppercase text-navy-900">Registration Deadline</dt>
-            <dd className="mt-1 text-sm font-normal text-rust">
+            <dd className="mt-1 text-[15px] sm:text-base font-bold text-rust">
               {formatDate(event.deadline_at)} ({deadlineLabel})
             </dd>
           </div>
